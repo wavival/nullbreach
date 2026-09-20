@@ -49,3 +49,13 @@ Create a feature branch and use conventional commits such as `feat(auth): add re
 Staging is configured for `stg.nullbreach.vercel.app`, and production for `nullbreach.vercel.app`. Configure the Vercel repository secrets and GitHub branch rules described in `CLAUDE.md` before enabling deployments or auto-merge.
 
 Never commit secrets. `.env.local` is ignored by Git.
+
+## Vercel authentication URLs
+
+Set `NEXTAUTH_URL` to the canonical HTTPS URL for each deployment environment,
+or remove it to let NextAuth use Vercel's automatic `VERCEL_URL`. Leave
+`NEXTAUTH_URL_INTERNAL` unset unless a separate internal authentication URL is
+needed. Do not save these variables as empty strings: NextAuth attempts to parse
+them when `SessionProvider` is imported, which can fail prerendering even on
+`/_not-found`. The Next.js configuration removes blank URL values before loading
+the application so the normal NextAuth fallbacks can apply.
