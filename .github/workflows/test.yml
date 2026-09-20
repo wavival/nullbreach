@@ -1,6 +1,7 @@
 name: Staging integration tests
 
 on:
+  workflow_dispatch:
   push:
     branches: [dev]
 
