@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_HOOKS:-}" == "true" ]]; then
+  exit 0
+fi
+
+pattern='(OPENAI_API_KEY|ANTHROPIC_API_KEY|AWS_SECRET_ACCESS_KEY|DATABASE_URL|NEXTAUTH_SECRET)[[:space:]]*[:=][[:space:]]*["'"'"'][^"'"'"']{8,}'
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [[ "$local_sha" == "0000000000000000000000000000000000000000" ]] && continue
+  if [[ "$remote_sha" == "0000000000000000000000000000000000000000" ]]; then
+    changes="$(git show --format= --unified=0 "$local_sha")"
+  else
+    changes="$(git diff --unified=0 "$remote_sha..$local_sha")"
+  fi
+  if printf '%s\n' "$changes" | grep -E '^[+]' | grep -Eiq "$pattern"; then
+    echo "Potential secret found in commits being pushed. Remove it and use environment variables."
+    exit 1
+  fi
+done

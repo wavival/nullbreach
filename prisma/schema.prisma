@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  password_hash String
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  chat_history ChatHistory[]
+  code_analyses CodeAnalysis[]
+
+  @@map("users")
+}
+
+model ChatHistory {
+  id         String   @id @default(cuid())
+  user_id    String
+  question   String   @db.Text
+  response   String   @db.Text
+  model      String
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, created_at])
+  @@map("chat_history")
+}
+
+model CodeAnalysis {
+  id              String   @id @default(cuid())
+  user_id         String
+  code_snippet    String   @db.Text
+  vulnerabilities String   @db.Text
+  created_at      DateTime @default(now())
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, created_at])
+  @@map("code_analyses")
+}

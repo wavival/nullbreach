@@ -1,0 +1,14 @@
+{
+  "dev": {
+    "description": "Integration branch. Pull requests must come from feat/*, fix/*, chore/*, docs/*, refactor/*, test/*, ci/* or security/*.",
+    "directPush": false
+  },
+  "stg": {
+    "description": "Staging promotion branch. Pull requests must come from dev.",
+    "directPush": false
+  },
+  "main": {
+    "description": "Production promotion branch. Pull requests must come from stg.",
+    "directPush": false
+  }
+}

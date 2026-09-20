@@ -1,0 +1,22 @@
+name: Open dev to staging promotion
+
+on:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-promotion-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create promotion PR when one does not exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(gh pr list --head dev --base stg --state open --json number --jq 'length')" = "0" ]; then
+            gh pr create --head dev --base stg --title "chore(deploy): promote dev to stg" --body "Automated promotion PR. It will merge after the staging buffer and required checks pass."
+          fi

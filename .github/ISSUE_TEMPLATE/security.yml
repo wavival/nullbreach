@@ -1,0 +1,13 @@
+name: Security report
+description: Report a suspected vulnerability without including secrets.
+labels: ["type: security"]
+body:
+  - type: dropdown
+    attributes: { label: Severity, options: [low, medium, high, critical] }
+    validations: { required: true }
+  - type: textarea
+    attributes: { label: Attack vector }
+    validations: { required: true }
+  - type: textarea
+    attributes: { label: Details }
+    validations: { required: true }

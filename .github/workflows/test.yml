@@ -1,0 +1,38 @@
+name: Staging integration tests
+
+on:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run test:coverage
+      - run: npx playwright install --with-deps chromium
+      - name: Run E2E tests against staging
+        if: vars.STAGING_URL != ''
+        run: npm run test:e2e
+        env:
+          E2E_BASE_URL: ${{ vars.STAGING_URL }}
+      - name: Explain skipped E2E tests
+        if: vars.STAGING_URL == ''
+        run: echo "STAGING_URL is not configured; no remote E2E tests were run."
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-${{ github.sha }}
+          path: |
+            coverage/
+            playwright-report/
+          if-no-files-found: warn
