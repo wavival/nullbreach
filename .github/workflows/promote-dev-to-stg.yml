@@ -1,8 +1,9 @@
 name: Open dev to staging promotion
 
 on:
-  push:
-    branches: [dev]
+  workflow_run:
+    workflows: ["Deploy staging"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -10,10 +11,24 @@ permissions:
 
 jobs:
   create-promotion-pr:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'dev'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Verify staging deployment is configured
+        id: config
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STAGING_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ] && [ -n "$VERCEL_TOKEN" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Refusing promotion: staging was not deployed."
+          fi
       - name: Create promotion PR when one does not exist
+        if: steps.config.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

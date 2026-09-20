@@ -23,7 +23,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Fail if an environment file is tracked
         run: |
-          if git ls-files | grep -Eq '(^|/)\.env($|\.)' && ! git ls-files | grep -qx '.env.example'; then
+          if git ls-files | grep -Ev '(^|/)\.env\.example$' | grep -Eq '(^|/)\.env($|\.)'; then
             echo "A .env file is tracked. Only .env.example is permitted."
             exit 1
           fi
