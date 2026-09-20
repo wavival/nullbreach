@@ -172,6 +172,16 @@ VERCEL_TOKEN
 
 Configura también las variables de aplicación en ambos proyectos Vercel. Sin esos secretos, el workflow no intenta desplegar y bloquea la promoción `dev → stg`.
 
+### URLs de autenticación en Vercel
+
+Configura `NEXTAUTH_URL` con la URL HTTPS canónica de cada entorno, o elimínala
+para que NextAuth use automáticamente `VERCEL_URL`. Mantén
+`NEXTAUTH_URL_INTERNAL` sin definir, salvo que exista una URL interna distinta.
+No guardes estas variables como cadenas vacías: NextAuth intenta interpretarlas
+al importar `SessionProvider`, lo que puede romper el prerenderizado incluso en
+`/_not-found`. La configuración de Next.js elimina valores vacíos antes de cargar
+la aplicación para que se apliquen los valores predeterminados de NextAuth.
+
 ## Seguridad
 
 - Las contraseñas se hashean con bcrypt.
