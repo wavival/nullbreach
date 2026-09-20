@@ -13,7 +13,8 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   else
     changes="$(git diff --unified=0 "$remote_sha..$local_sha")"
   fi
-  if printf '%s\n' "$changes" | grep -E '^[+]' | grep -Eiq "$pattern"; then
+  added_lines="$(printf '%s\n' "$changes" | grep -E '^[+]' || true)"
+  if grep -Eiq "$pattern" <<<"$added_lines"; then
     echo "Potential secret found in commits being pushed. Remove it and use environment variables."
     exit 1
   fi
