@@ -1,122 +1,51 @@
-<h1 align="left">
-  <img src="assets/icon.svg" width="32px" valign="middle">
-  NullBreach • UI
-</h1>
+# NullBreach
 
-![Banner principal](assets/banner.png)
+NullBreach is a full-stack cybersecurity assistant built with Next.js App Router, Prisma/Supabase, NextAuth, and the OpenAI API.
 
-> NullBreach is a production-grade React interface for AI-powered security analysis. Chat with Claude about cybersecurity, submit code for instant OWASP vulnerability detection, and manage your session history, all behind JWT authentication. Deploys to Netlify in one click.
+## Migration overview
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-wavival.dev/nullbreach-0F172A?style=for-the-badge&logo=vercel&logoColor=white)](https://wavival.dev/nullbreach)
-[![API Docs](https://img.shields.io/badge/API_Docs-nullbreach--api.wavival.dev-0F172A?style=for-the-badge&logo=swagger&logoColor=white)](https://nullbreach-api.wavival.dev/api/docs/)
-[![Repo](https://img.shields.io/badge/Repo-nullbreach-0F172A?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wavival/nullbreach)
+The previous codebase was a two-application monorepo:
 
-Monorepo with three apps:
+- `apps/frontend`: a standalone Vite + React client responsible for the user interface and API calls.
+- `apps/backend`: a Django REST API responsible for authentication, chat, code analysis, rate limiting, and persistence.
 
-| App | Path | Stack | Role |
-| --- | --- | --- | --- |
-| **Frontend** | [`apps/frontend`](apps/frontend/README.md) | React 18 · Vite 8 · TypeScript · Tailwind | Authenticated SPA — chat, analyzer, account. |
-| **Landing** | [`apps/landing`](apps/landing/README.md) | Astro · Tailwind (zero client JS) | Public marketing page (ES/EN), static. Links into the SPA for sign-in. |
-| **Backend** | [`apps/backend`](apps/backend/README.md) | Django · Django REST · JWT | API — auth, chat sessions, message history, code analysis. |
+That split required separate builds, runtimes, deployment configuration, authentication boundaries, and duplicated operational documentation. It also left the frontend and API with different release paths.
 
-## Layout
+The repository now contains one Next.js application at its root. The migration consolidated the system to:
 
-```
-nullbreach/
-├── apps/
-│   ├── frontend/   # React + Vite SPA
-│   ├── landing/    # Astro landing
-│   └── backend/    # Django REST API
-├── package.json    # npm workspaces (frontend + landing)
-└── .github/        # CI
-```
+- Next.js App Router for UI, server routes, and deployment unit.
+- NextAuth credentials sessions with secure httpOnly cookies.
+- Prisma as the database access layer and a PostgreSQL/Supabase-ready initial migration.
+- OpenAI's server-side SDK for chat and code analysis endpoints.
+- Jest, Playwright, local Git hooks, GitHub Actions, and Vercel deployment workflows.
 
-The two JS apps are npm workspaces; the backend is a standalone Python project.
+The Django and legacy Vite/Astro code was intentionally removed after its behavior was represented in the new application. The initial Prisma migration remains unapplied until a Supabase `DATABASE_URL` is configured.
 
-## Quickstart
+## Local development
 
-JS apps (from the repo root):
+1. Copy `.env.example` to `.env.local` and configure `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `OPENAI_API_KEY`, and `OPENAI_MODEL`.
+2. Run `npm install` and `npm run prepare` to install the repository Git hooks.
+3. After connecting Supabase, run `npx prisma migrate deploy`.
+4. Start the application with `npm run dev`.
 
-```bash
-npm install            # installs frontend + landing workspaces
-npm run dev            # frontend SPA   → http://localhost:5173
-npm run dev:landing    # landing        → http://localhost:4321
-npm run build:all      # build both
-```
+Useful checks are `npm run lint`, `npm run test`, `npm run test:coverage`, `npm run test:e2e`, and `npm run build`.
 
-Backend (its own toolchain):
+## Development workflow
 
-```bash
-cd apps/backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # fill in secrets — NOT committed
-python manage.py migrate
-python manage.py runserver
+The only allowed promotion path is:
+
+```text
+feat/* | fix/* | chore/* | docs/* | refactor/* | test/* | ci/* | security/*
+                                  ↓
+                                 dev
+                                  ↓
+                                 stg
+                                  ↓
+                                main
 ```
 
-See each app's own `README.md` for details.
+Create a feature branch and use conventional commits such as `feat(auth): add registration`. Open a PR into `dev`; promote only `dev → stg`, then only `stg → main`. Do not commit, merge, or open promotion PRs that bypass that sequence. The feature-to-`dev` merge uses squash; the `stg`-to-`main` promotion uses a regular merge.
 
-## Deploy
+Staging is configured for `stg.nullbreach.vercel.app`, and production for `nullbreach.vercel.app`. Configure the Vercel repository secrets and GitHub branch rules described in `CLAUDE.md` before enabling deployments or auto-merge.
 
-Two independent targets:
-
-**Web (frontend + landing) → Netlify.** `netlify.toml` runs `npm run build:web`,
-which builds both apps and merges them into `dist/` under `/nullbreach/` (see
-`scripts/merge-dist.mjs`). That script also generates `dist/_headers` (cache +
-CSP, with sha256 hashes of any inline scripts) and the apex `robots.txt`.
-
-- Publish dir: `dist`. Build command is already set in `netlify.toml`.
-- **Required build env:** `VITE_API_URL` — the API origin baked into the SPA
-  (the bundle throws at load if it's unset). It is pinned in `netlify.toml` and
-  **must match the CSP `connect-src`**, which `merge-dist.mjs` derives from the
-  same value. Change the origin in one place.
-
-**Backend → Railway** (Nixpacks; Python pinned by `.python-version`). The
-`Procfile` declares `release: migrate && createcachetable` and
-`web: gunicorn config.wsgi:application --workers 2`.
-
-- **Required env:** `SECRET_KEY`, `DATABASE_URL` (PostgreSQL), `ANTHROPIC_API_KEY`,
-  `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`. See `apps/backend/.env.example`.
-- SSL is delegated to the Railway proxy (`SECURE_SSL_REDIRECT=False` is
-  intentional — re-enabling it behind TLS termination causes redirect loops).
-
-## Notes
-
-- Brand/design tokens live in `apps/frontend/tailwind.config.ts`; the landing
-  mirrors them in `apps/landing/tailwind.config.ts`.
-- Secrets (`.env`) and virtualenvs (`.venv`) are git-ignored and were **not**
-  carried over when the backend was merged in.
-
----
-
-## License
-
-This project is licensed under the **MIT License**, with the following clarification:
-
-- **Clone**: You can clone this repository freely
-- **Fork**: You can fork and create your own version
-- **Contribute**: Pull requests and contributions are welcome
-- **Learn**: Use this code to study and learn software architecture
-- **Modify**: Adapt the code to your needs
-- **Attribution**: Please credit the original author (Valentina Ramírez / @wavival)
-
-This is **not** a commercial product. It's an educational resource demonstrating
-frontend architecture, security practices, and full-stack development. See the [LICENSE](LICENSE) file for the full text.
-
-Copyright © 2026 Valentina Ramírez.
-
-## Contact
-
-![Banner principal](assets/footer.png)
-
-<h3 align="left">
-  <img src="assets/logo-w.png" width="48px" valign="middle">
-  Valentina Ramírez • @wavival
-</h3>
-
-> Thanks for getting here. Let's build great things.
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-wavival-407bff?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/wavival)
-[![Instagram](https://img.shields.io/badge/Instagram-@wavival-407bff?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/wavival)
-[![Email](https://img.shields.io/badge/Email-wavival.dev@luminaw.co-407bff?style=for-the-badge&logo=gmail&logoColor=white)](mailto:wavival.dev@luminaw.co)
+Never commit secrets. `.env.local` is ignored by Git.

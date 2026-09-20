@@ -1,0 +1,29 @@
+name: Branch flow validation
+
+on:
+  pull_request:
+    branches: [dev, stg, main]
+    types: [opened, reopened, synchronize, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate allowed source branch
+        env:
+          BASE: ${{ github.event.pull_request.base.ref }}
+          HEAD: ${{ github.event.pull_request.head.ref }}
+        run: |
+          case "$BASE" in
+            dev) allowed='^(feat|fix|chore|docs|refactor|test|ci|security)/[a-z0-9]+([a-z0-9-]*[a-z0-9]+)?$' ;;
+            stg) allowed='^dev$' ;;
+            main) allowed='^stg$' ;;
+            *) echo "Unsupported target branch: $BASE"; exit 1 ;;
+          esac
+          if ! [[ "$HEAD" =~ $allowed ]]; then
+            echo "'$HEAD' is not an allowed source for '$BASE'."
+            exit 1
+          fi
