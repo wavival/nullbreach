@@ -7,3 +7,9 @@ Never create, merge, push, or otherwise promote changes to the next environment 
 The only valid direction is `feature/* → dev → stg → main`. A source commit may advance only after all required quality, security, test, review, and applicable deployment checks have concluded successfully. A deployment that was not configured or was skipped is not evidence that the source is eligible for promotion.
 
 When a check fails, stop the promotion flow. Diagnose and correct the failure on a permitted source branch, re-run the full check set, and verify every required check is green before proceeding.
+
+## Cleanup after merge — mandatory
+
+When a work branch has been successfully merged into `dev` and the merge is confirmed, delete that branch from both the remote and the local checkout. Perform cleanup only after the successful merge; never delete a branch with an open PR, pending checks, unmerged work, or one of the permanent environment branches.
+
+The permanent branches are `dev`, `stg`, and `main`. At the end of a completed delivery flow, no feature, fix, chore, docs, refactor, test, ci, or security branch may remain locally or remotely.
