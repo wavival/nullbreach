@@ -158,19 +158,18 @@ Los hooks se instalan con `npm run prepare`. Validan nombre de rama, Conventiona
 
 GitHub Actions ejecuta CI, cobertura, revisión estática, análisis de dependencias y secretos, tests de integración, promoción y despliegue.
 
-- Staging: `stg.nullbreach.vercel.app`, asociado al proyecto Vercel de staging.
-- Producción: `nullbreach.vercel.app`, asociado al proyecto Vercel de producción.
+- Staging: ambiente Preview del proyecto Vercel `nullbreach`.
+- Producción: ambiente Production del mismo proyecto Vercel `nullbreach`.
 
 Antes de activar despliegues reales, configura estos GitHub Secrets:
 
 ```text
 VERCEL_ORG_ID
-VERCEL_STAGING_PROJECT_ID
-VERCEL_PRODUCTION_PROJECT_ID
+VERCEL_PROJECT_ID
 VERCEL_TOKEN
 ```
 
-Configura también las variables de aplicación en ambos proyectos Vercel. Sin esos secretos, el workflow no intenta desplegar y bloquea la promoción `dev → stg`.
+Configura también las variables de aplicación en ambos ambientes de Vercel. Sin esos secretos, el workflow falla y bloquea la promoción `dev → stg`.
 
 ### URLs de autenticación en Vercel
 
