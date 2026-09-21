@@ -1,11 +1,12 @@
-import { withAuth } from "next-auth/middleware";
+import { getToken } from "next-auth/jwt";
+import { NextRequest, NextResponse } from "next/server";
 
-const protectApiRoutes = withAuth({
-  callbacks: { authorized: ({ token }) => Boolean(token) },
-});
-
-export function proxy(...args: Parameters<typeof protectApiRoutes>) {
-  return protectApiRoutes(...args);
+export async function proxy(request: NextRequest) {
+  const token = await getToken({ req: request });
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return NextResponse.next();
 }
 
 export const config = {
