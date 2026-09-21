@@ -167,6 +167,7 @@ Antes de activar despliegues reales, configura estos GitHub Secrets:
 VERCEL_ORG_ID
 VERCEL_PROJECT_ID
 VERCEL_TOKEN
+VERCEL_AUTOMATION_BYPASS_SECRET
 ```
 
 Configura también las variables de aplicación en ambos ambientes de Vercel. Sin esos secretos, el workflow falla y bloquea la promoción `dev → stg`.
