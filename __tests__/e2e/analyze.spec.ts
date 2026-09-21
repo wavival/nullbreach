@@ -5,4 +5,5 @@ test("analyze API protects unauthenticated requests", async ({ request }) => {
     data: { code: "const token = 'test';" },
   });
   expect(response.status()).toBe(401);
+  await expect(response.json()).resolves.toEqual({ error: "Unauthorized" });
 });

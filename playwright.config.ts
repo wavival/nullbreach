@@ -12,7 +12,10 @@ export default defineConfig({
     baseURL,
     trace: "retain-on-failure",
     extraHTTPHeaders: protectionBypass
-      ? { "x-vercel-protection-bypass": protectionBypass }
+      ? {
+          "x-vercel-protection-bypass": protectionBypass,
+          "x-vercel-set-bypass-cookie": "true",
+        }
       : undefined,
   },
   webServer: externalBaseURL
