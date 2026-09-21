@@ -5,4 +5,5 @@ test("chat API protects unauthenticated requests", async ({ request }) => {
     data: { question: "test" },
   });
   expect(response.status()).toBe(401);
+  await expect(response.json()).resolves.toEqual({ error: "Unauthorized" });
 });
