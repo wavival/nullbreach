@@ -1,0 +1,45 @@
+name: E2E tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: URL of an already deployed environment to test
+        required: true
+        type: string
+  pull_request:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run test:coverage
+      - run: npx playwright install --with-deps chromium
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          E2E_BASE_URL: ${{ inputs.base_url }}
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/nullbreach
+          NEXTAUTH_SECRET: ci-only-secret-not-for-production
+          NEXTAUTH_URL: http://localhost:3000
+          OPENAI_API_KEY: sk-ci-placeholder
+          OPENAI_MODEL: gpt-5
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports-${{ github.sha }}
+          path: |
+            coverage/
+            playwright-report/
+          if-no-files-found: warn

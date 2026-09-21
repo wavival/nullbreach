@@ -1,0 +1,21 @@
+name: Auto-merge feature PRs to dev
+
+on:
+  pull_request_target:
+    branches: [dev]
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable-auto-merge:
+    if: "startsWith(github.event.pull_request.head.ref, 'feat/') || startsWith(github.event.pull_request.head.ref, 'fix/') || startsWith(github.event.pull_request.head.ref, 'chore/') || startsWith(github.event.pull_request.head.ref, 'docs/') || startsWith(github.event.pull_request.head.ref, 'refactor/') || startsWith(github.event.pull_request.head.ref, 'test/') || startsWith(github.event.pull_request.head.ref, 'ci/') || startsWith(github.event.pull_request.head.ref, 'security/')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash

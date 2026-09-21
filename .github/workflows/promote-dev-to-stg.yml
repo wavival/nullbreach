@@ -1,0 +1,33 @@
+name: Open dev to staging promotion
+
+on:
+  workflow_run:
+    workflows: ["Deploy staging"]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-promotion-pr:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify staging deployment is configured
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_TOKEN" ]; then
+            echo "Refusing promotion: staging was not deployed."
+            exit 1
+          fi
+      - name: Create promotion PR when one does not exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(gh pr list --head dev --base stg --state open --json number --jq 'length')" = "0" ]; then
+            gh pr create --head dev --base stg --title "chore(deploy): promote dev to stg" --body "Automated promotion PR. It will merge after the staging buffer and required checks pass."
+          fi
