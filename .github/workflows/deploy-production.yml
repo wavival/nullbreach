@@ -1,0 +1,49 @@
+name: Deploy production
+
+on:
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Check production deployment configuration
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_TOKEN" ]; then
+            echo "Production deployment is not configured."
+            exit 1
+          fi
+      - name: Deploy production to the nullbreach Vercel project
+        id: deploy
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm exec --yes vercel@latest pull -- --yes --environment=production --token="$VERCEL_TOKEN"
+          npm exec --yes vercel@latest build -- --prod --token="$VERCEL_TOKEN"
+          url="$(npm exec --yes vercel@latest deploy -- --prebuilt --prod --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Health check
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+        run: curl --fail --retry 5 --retry-all-errors --retry-delay 10 "$DEPLOYMENT_URL"
+      - name: Deployment failure guidance
+        if: failure()
+        run: echo "Health check failed. Configure VERCEL_PREVIOUS_PRODUCTION_DEPLOYMENT_URL and perform a Vercel rollback from that verified deployment."

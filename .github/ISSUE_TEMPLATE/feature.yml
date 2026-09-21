@@ -1,0 +1,10 @@
+name: Feature request
+description: Propose a product improvement.
+labels: ["type: feature"]
+body:
+  - type: textarea
+    attributes: { label: Description }
+    validations: { required: true }
+  - type: textarea
+    attributes: { label: Acceptance criteria }
+    validations: { required: true }

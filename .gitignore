@@ -1,25 +1,10 @@
-# ---- Node / JS ----
 node_modules/
-dist/
-.vite/
-.astro/
+.next/
 coverage/
-*.tsbuildinfo
-
-# ---- Python / Django ----
-.venv/
-__pycache__/
-*.py[cod]
-*.sqlite3
-staticfiles/
-mediafiles/
-
-# ---- Env / secrets ----
-.env
-.env.*
+playwright-report/
+test-results/
+out/
+.env*
 !.env.example
-
-# ---- OS / editor ----
-.DS_Store
-Thumbs.db
-*.log
+*.tsbuildinfo
+.vercel

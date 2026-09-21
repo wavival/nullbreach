@@ -1,0 +1,22 @@
+name: Open staging to production promotion
+
+on:
+  push:
+    branches: [stg]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-promotion-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create promotion PR when one does not exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(gh pr list --head stg --base main --state open --json number --jq 'length')" = "0" ]; then
+            gh pr create --head stg --base main --title "chore(deploy): promote stg to main" --body "Automated production promotion PR. It is intentionally a regular merge, not squash."
+          fi

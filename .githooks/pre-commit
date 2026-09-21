@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_HOOKS:-}" == "true" ]]; then
+  exit 0
+fi
+
+branch="$(git branch --show-current)"
+allowed='^(feat|fix|chore|docs|refactor|test|ci|security)/[a-z0-9]+([a-z0-9-]*[a-z0-9]+)?$'
+
+if [[ "$branch" == "dev" || "$branch" == "stg" || "$branch" == "main" ]]; then
+  echo "Direct commits to '$branch' are blocked. Create a feature branch first."
+  exit 1
+fi
+
+if [[ ! "$branch" =~ $allowed ]]; then
+  echo "Invalid branch '$branch'. Use: tipo/descripcion-corta (for example feat/login-flow)."
+  exit 1
+fi

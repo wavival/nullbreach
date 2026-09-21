@@ -1,122 +1,198 @@
-<h1 align="left">
-  <img src="assets/icon.svg" width="32px" valign="middle">
-  NullBreach • UI
-</h1>
+# NullBreach
 
-![Banner principal](assets/banner.png)
+NullBreach es un asistente de ciberseguridad full-stack. Permite a usuarios autenticados consultar dudas de desarrollo seguro y analizar fragmentos de código para identificar riesgos OWASP, impacto y medidas de remediación.
 
-> NullBreach is a production-grade React interface for AI-powered security analysis. Chat with Claude about cybersecurity, submit code for instant OWASP vulnerability detection, and manage your session history, all behind JWT authentication. Deploys to Netlify in one click.
+La aplicación se ejecuta como una única unidad Next.js: la interfaz, autenticación, rutas de API y capa de despliegue viven en este repositorio.
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-wavival.dev/nullbreach-0F172A?style=for-the-badge&logo=vercel&logoColor=white)](https://wavival.dev/nullbreach)
-[![API Docs](https://img.shields.io/badge/API_Docs-nullbreach--api.wavival.dev-0F172A?style=for-the-badge&logo=swagger&logoColor=white)](https://nullbreach-api.wavival.dev/api/docs/)
-[![Repo](https://img.shields.io/badge/Repo-nullbreach-0F172A?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wavival/nullbreach)
+## Índice
 
-Monorepo with three apps:
+- [Migración](#migración)
+- [Arquitectura](#arquitectura)
+- [Estructura](#estructura-del-repositorio)
+- [Desarrollo local](#requisitos-y-desarrollo-local)
+- [Variables de entorno](#variables-de-entorno)
+- [Base de datos](#base-de-datos)
+- [API](#api)
+- [Calidad](#calidad-y-pruebas)
+- [Flujo Git](#flujo-git-y-entregas)
+- [CI/CD](#cicd-y-despliegue)
+- [Seguridad](#seguridad)
 
-| App | Path | Stack | Role |
-| --- | --- | --- | --- |
-| **Frontend** | [`apps/frontend`](apps/frontend/README.md) | React 18 · Vite 8 · TypeScript · Tailwind | Authenticated SPA — chat, analyzer, account. |
-| **Landing** | [`apps/landing`](apps/landing/README.md) | Astro · Tailwind (zero client JS) | Public marketing page (ES/EN), static. Links into the SPA for sign-in. |
-| **Backend** | [`apps/backend`](apps/backend/README.md) | Django · Django REST · JWT | API — auth, chat sessions, message history, code analysis. |
+## Migración
 
-## Layout
+### Estructura anterior
 
+El proyecto anterior era un monorepo dividido en dos aplicaciones independientes:
+
+- `apps/frontend`: cliente Vite + React para la interfaz, navegación, almacenamiento de tokens y consumo de API.
+- `apps/backend`: API Django REST para autenticación, chat, análisis de código, rate limiting y persistencia.
+
+También existían proyectos separados para el frontend y la API. Esa distribución requería builds, dependencias, variables de entorno y despliegues distintos; la autenticación cruzaba una frontera cliente/API adicional y las pruebas y documentación se duplicaban.
+
+### Por qué se migró
+
+La migración reduce el coste operativo y unifica el modelo de seguridad:
+
+- Un solo runtime y un despliegue para interfaz y endpoints.
+- Sesiones NextAuth en cookies `httpOnly`, sin tokens de sesión gestionados por el navegador.
+- Prisma como acceso tipado a PostgreSQL/Supabase y migraciones versionadas.
+- OpenAI SDK solo en servidor, sin exponer la clave de IA.
+- Un pipeline común de formato, lint, pruebas, build, escaneo de secretos y promoción de ramas.
+
+El código Django, Vite y Astro fue retirado cuando sus responsabilidades quedaron cubiertas por la aplicación Next.js. La migración inicial de Prisma se incluye en el repositorio, pero no se aplica hasta configurar una `DATABASE_URL` real.
+
+## Arquitectura
+
+| Capa           | Tecnología                         | Responsabilidad                                       |
+| -------------- | ---------------------------------- | ----------------------------------------------------- |
+| Aplicación     | Next.js App Router                 | UI, rendering de servidor y rutas API                 |
+| Autenticación  | NextAuth Credentials               | Sesión JWT en cookie `httpOnly` y protección de rutas |
+| Persistencia   | Prisma + PostgreSQL/Supabase       | Usuarios, historial de chat y análisis                |
+| IA             | OpenAI Responses API               | Chat y análisis de código                             |
+| Estilos        | Tailwind CSS                       | Diseño responsive                                     |
+| Calidad        | Jest, Playwright, ESLint, Prettier | Pruebas, cobertura, lint y formato                    |
+| Automatización | GitHub Actions y Vercel            | CI, seguridad y despliegues                           |
+
+## Estructura del repositorio
+
+```text
+app/
+  (auth)/                 # Login y registro
+  (protected)/            # Dashboard y analizador protegidos por sesión
+  api/                    # Auth, chat, analyze e history
+components/               # Componentes reutilizables
+lib/                      # Auth, Prisma, OpenAI y validaciones
+prisma/                   # Esquema y migración PostgreSQL inicial
+__tests__/unit/           # Pruebas Jest
+__tests__/e2e/            # Pruebas Playwright
+.github/workflows/        # CI, seguridad, promoción y despliegue
+.githooks/                # Validación local de ramas, commits y secretos
+AGENTS.md                 # Reglas obligatorias para agentes
+CLAUDE.md                 # Convenciones de ingeniería
 ```
-nullbreach/
-├── apps/
-│   ├── frontend/   # React + Vite SPA
-│   ├── landing/    # Astro landing
-│   └── backend/    # Django REST API
-├── package.json    # npm workspaces (frontend + landing)
-└── .github/        # CI
-```
 
-The two JS apps are npm workspaces; the backend is a standalone Python project.
+## Requisitos y desarrollo local
 
-## Quickstart
-
-JS apps (from the repo root):
+- Node.js 20 o superior.
+- PostgreSQL/Supabase para flujos que persisten datos.
+- Clave de OpenAI para chat y análisis reales.
 
 ```bash
-npm install            # installs frontend + landing workspaces
-npm run dev            # frontend SPA   → http://localhost:5173
-npm run dev:landing    # landing        → http://localhost:4321
-npm run build:all      # build both
+cp .env.example .env.local
+npm install
+npm run prepare
+npx prisma migrate deploy
+npm run dev
 ```
 
-Backend (its own toolchain):
+Abre [http://localhost:3000](http://localhost:3000). Sin base de datos o clave de OpenAI, la UI renderiza, pero registro, historial, chat y análisis no estarán disponibles.
 
-```bash
-cd apps/backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # fill in secrets — NOT committed
-python manage.py migrate
-python manage.py runserver
+## Variables de entorno
+
+| Variable              | Uso                                          |
+| --------------------- | -------------------------------------------- |
+| `DATABASE_URL`        | URL PostgreSQL de Supabase para Prisma       |
+| `NEXTAUTH_SECRET`     | Secreto de firma de sesiones NextAuth        |
+| `NEXTAUTH_URL`        | URL pública de la aplicación                 |
+| `OPENAI_API_KEY`      | Clave usada únicamente por rutas de servidor |
+| `OPENAI_MODEL`        | Modelo para Responses API                    |
+| `NEXT_PUBLIC_API_URL` | URL pública opcional para clientes           |
+
+No versionar `.env.local` ni secretos. `.env.example` es solo una plantilla sin valores reales.
+
+## Base de datos
+
+El esquema Prisma define `User`, `ChatHistory` y `CodeAnalysis`, con relaciones por usuario y borrado en cascada. Tras configurar `DATABASE_URL`, aplica migraciones con `npx prisma migrate deploy`. Para cambios de esquema usa `npx prisma migrate dev --name <descripcion>` y nunca modifiques una migración aplicada en un entorno compartido.
+
+## API
+
+| Ruta                      | Método        | Sesión   | Descripción                             |
+| ------------------------- | ------------- | -------- | --------------------------------------- |
+| `/api/auth/register`      | `POST`        | No       | Crea un usuario con contraseña hasheada |
+| `/api/auth/[...nextauth]` | `GET`, `POST` | NextAuth | Login, logout y sesión                  |
+| `/api/chat`               | `POST`        | Sí       | Consulta a OpenAI y guarda historial    |
+| `/api/analyze`            | `POST`        | Sí       | Analiza código y persiste resultado     |
+| `/api/history`            | `GET`         | Sí       | Obtiene historial del usuario actual    |
+
+Las rutas privadas verifican la sesión en servidor. Los componentes cliente nunca reciben `OPENAI_API_KEY` ni `DATABASE_URL`.
+
+## Calidad y pruebas
+
+| Comando                 | Propósito                                   |
+| ----------------------- | ------------------------------------------- |
+| `npm run dev`           | Servidor de desarrollo                      |
+| `npm run lint`          | ESLint                                      |
+| `npm run format:check`  | Verifica Prettier                           |
+| `npm run test`          | Pruebas unitarias Jest                      |
+| `npm run test:coverage` | Jest y cobertura mínima del 70%             |
+| `npm run test:e2e`      | Playwright; usa `E2E_BASE_URL` para staging |
+| `npm run build`         | Build de producción Next.js                 |
+
+En los PR hacia `dev`, Playwright levanta la aplicación localmente y ejecuta los E2E sin depender de un entorno remoto. El workflow también puede lanzarse manualmente con `base_url` para validar un despliegue existente. Una omisión de E2E o deploy por falta de entorno nunca es evidencia para una promoción.
+
+## Flujo Git y entregas
+
+La única secuencia permitida es:
+
+```text
+feat/* | fix/* | chore/* | docs/* | refactor/* | test/* | ci/* | security/*
+                                  ↓
+                                 dev
+                                  ↓
+                                 stg
+                                  ↓
+                                main
 ```
 
-See each app's own `README.md` for details.
+- No se hacen commits o merges directos a `dev`, `stg` ni `main`.
+- Las ramas usan `tipo/descripcion-corta`.
+- Los commits usan `tipo(scope): descripcion`, por ejemplo `feat(auth): add registration`.
+- Scopes permitidos: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps` y `core`.
+- La entrada a `dev` usa squash merge; `stg → main` usa merge regular.
+- No promociones con checks pendientes, fallidos, cancelados o no disponibles. Un staging no desplegado no habilita `dev → stg`.
+- Tras un merge exitoso a `dev`, se elimina la rama de trabajo local y remota. Al acabar un flujo solo quedan `dev`, `stg` y `main`.
 
-## Deploy
+Los hooks se instalan con `npm run prepare`. Validan nombre de rama, Conventional Commits, em dash y patrones de secretos antes de push. Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para el proceso completo.
 
-Two independent targets:
+## CI/CD y despliegue
 
-**Web (frontend + landing) → Netlify.** `netlify.toml` runs `npm run build:web`,
-which builds both apps and merges them into `dist/` under `/nullbreach/` (see
-`scripts/merge-dist.mjs`). That script also generates `dist/_headers` (cache +
-CSP, with sha256 hashes of any inline scripts) and the apex `robots.txt`.
+GitHub Actions ejecuta CI, cobertura, revisión estática, análisis de dependencias y secretos, tests de integración, promoción y despliegue.
 
-- Publish dir: `dist`. Build command is already set in `netlify.toml`.
-- **Required build env:** `VITE_API_URL` — the API origin baked into the SPA
-  (the bundle throws at load if it's unset). It is pinned in `netlify.toml` and
-  **must match the CSP `connect-src`**, which `merge-dist.mjs` derives from the
-  same value. Change the origin in one place.
+- Staging: ambiente Preview del proyecto Vercel `nullbreach`.
+- Producción: ambiente Production del mismo proyecto Vercel `nullbreach`.
 
-**Backend → Railway** (Nixpacks; Python pinned by `.python-version`). The
-`Procfile` declares `release: migrate && createcachetable` and
-`web: gunicorn config.wsgi:application --workers 2`.
+Antes de activar despliegues reales, configura estos GitHub Secrets:
 
-- **Required env:** `SECRET_KEY`, `DATABASE_URL` (PostgreSQL), `ANTHROPIC_API_KEY`,
-  `ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS`. See `apps/backend/.env.example`.
-- SSL is delegated to the Railway proxy (`SECURE_SSL_REDIRECT=False` is
-  intentional — re-enabling it behind TLS termination causes redirect loops).
+```text
+VERCEL_ORG_ID
+VERCEL_PROJECT_ID
+VERCEL_TOKEN
+VERCEL_AUTOMATION_BYPASS_SECRET
+```
 
-## Notes
+`VERCEL_AUTOMATION_BYPASS_SECRET` debe contener el secreto generado por Protection Bypass for Automation en Vercel. El workflow lo usa únicamente para los health checks y E2E del ambiente Preview.
 
-- Brand/design tokens live in `apps/frontend/tailwind.config.ts`; the landing
-  mirrors them in `apps/landing/tailwind.config.ts`.
-- Secrets (`.env`) and virtualenvs (`.venv`) are git-ignored and were **not**
-  carried over when the backend was merged in.
+Configura también las variables de aplicación en ambos ambientes de Vercel. Sin esos secretos, el workflow falla y bloquea la promoción `dev → stg`.
 
----
+### URLs de autenticación en Vercel
 
-## License
+Configura `NEXTAUTH_URL` con la URL HTTPS canónica de cada entorno, o elimínala
+para que NextAuth use automáticamente `VERCEL_URL`. Mantén
+`NEXTAUTH_URL_INTERNAL` sin definir, salvo que exista una URL interna distinta.
+No guardes estas variables como cadenas vacías: NextAuth intenta interpretarlas
+al importar `SessionProvider`, lo que puede romper el prerenderizado incluso en
+`/_not-found`. La configuración de Next.js elimina valores vacíos antes de cargar
+la aplicación para que se apliquen los valores predeterminados de NextAuth.
 
-This project is licensed under the **MIT License**, with the following clarification:
+## Seguridad
 
-- **Clone**: You can clone this repository freely
-- **Fork**: You can fork and create your own version
-- **Contribute**: Pull requests and contributions are welcome
-- **Learn**: Use this code to study and learn software architecture
-- **Modify**: Adapt the code to your needs
-- **Attribution**: Please credit the original author (Valentina Ramírez / @wavival)
+- Las contraseñas se hashean con bcrypt.
+- NextAuth gestiona cookies de sesión que no se exponen al JavaScript cliente.
+- OpenAI y Prisma solo se invocan desde servidor.
+- Hooks y GitHub Actions detectan secretos; no sustituyen la revisión humana.
+- `npm audit` y Gitleaks se ejecutan en CI.
+- Reporta vulnerabilidades de manera privada y no publiques secretos ni detalles de explotación en issues públicos.
 
-This is **not** a commercial product. It's an educational resource demonstrating
-frontend architecture, security practices, and full-stack development. See the [LICENSE](LICENSE) file for the full text.
+## Contribución y licencia
 
-Copyright © 2026 Valentina Ramírez.
-
-## Contact
-
-![Banner principal](assets/footer.png)
-
-<h3 align="left">
-  <img src="assets/logo-w.png" width="48px" valign="middle">
-  Valentina Ramírez • @wavival
-</h3>
-
-> Thanks for getting here. Let's build great things.
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-wavival-407bff?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/wavival)
-[![Instagram](https://img.shields.io/badge/Instagram-@wavival-407bff?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/wavival)
-[![Email](https://img.shields.io/badge/Email-wavival.dev@luminaw.co-407bff?style=for-the-badge&logo=gmail&logoColor=white)](mailto:wavival.dev@luminaw.co)
+Lee [CONTRIBUTING.md](CONTRIBUTING.md) antes de abrir un cambio. El proyecto se distribuye bajo [MIT License](LICENSE).

@@ -1,0 +1,71 @@
+name: Deploy staging
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev]
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Check staging deployment configuration
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
+            echo "Staging deployment is not configured."
+            exit 1
+          fi
+      - name: Deploy preview to the nullbreach Vercel project
+        id: deploy
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm exec --yes vercel@latest pull -- --yes --environment=preview --git-branch=dev --token="$VERCEL_TOKEN"
+          npm exec --yes vercel@latest build -- --token="$VERCEL_TOKEN"
+          url="$(npm exec --yes vercel@latest deploy -- --prebuilt --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Health check
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          curl --fail --retry 5 --retry-all-errors --retry-delay 10 --header "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" "$DEPLOYMENT_URL"
+      - name: Install E2E dependencies
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+      - name: Run E2E tests against the deployed preview
+        run: npm run test:e2e
+        env:
+          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      - name: Report staging deployment URL
+        if: success()
+        uses: actions/github-script@v7
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+        with:
+          script: |
+            const prs = await github.rest.pulls.list({ owner: context.repo.owner, repo: context.repo.repo, head: `${context.repo.owner}:dev`, state: 'open' });
+            for (const pr of prs.data) {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, body: `Staging deployed: ${process.env.DEPLOYMENT_URL}` });
+            }
