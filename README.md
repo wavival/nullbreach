@@ -167,9 +167,10 @@ Antes de activar despliegues reales, configura estos GitHub Secrets:
 VERCEL_ORG_ID
 VERCEL_PROJECT_ID
 VERCEL_TOKEN
+VERCEL_AUTOMATION_BYPASS_SECRET
 ```
 
-Vercel genera `VERCEL_AUTOMATION_BYPASS_SECRET` como variable de sistema del ambiente Preview cuando Protection Bypass for Automation está habilitado. El workflow la obtiene durante `vercel pull`, la enmascara y la usa únicamente para health checks y E2E.
+`VERCEL_AUTOMATION_BYPASS_SECRET` debe contener el secreto generado por Protection Bypass for Automation en Vercel. El workflow lo usa únicamente para los health checks y E2E del ambiente Preview.
 
 Configura también las variables de aplicación en ambos ambientes de Vercel. Sin esos secretos, el workflow falla y bloquea la promoción `dev → stg`.
 
