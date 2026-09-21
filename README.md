@@ -128,7 +128,7 @@ Las rutas privadas verifican la sesión en servidor. Los componentes cliente nun
 | `npm run test:e2e`      | Playwright; usa `E2E_BASE_URL` para staging |
 | `npm run build`         | Build de producción Next.js                 |
 
-En CI, Playwright ejecuta E2E remotos solo cuando `STAGING_URL` está configurada. Una omisión de E2E o deploy por falta de entorno nunca es evidencia para una promoción.
+En los PR hacia `dev`, Playwright levanta la aplicación localmente y ejecuta los E2E sin depender de un entorno remoto. El workflow también puede lanzarse manualmente con `base_url` para validar un despliegue existente. Una omisión de E2E o deploy por falta de entorno nunca es evidencia para una promoción.
 
 ## Flujo Git y entregas
 
