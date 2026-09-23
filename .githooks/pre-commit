@@ -6,7 +6,7 @@ if [[ "${SKIP_HOOKS:-}" == "true" ]]; then
 fi
 
 branch="$(git branch --show-current)"
-allowed='^(feat|fix|chore|docs|refactor|test|ci|security)/[a-z0-9]+([a-z0-9-]*[a-z0-9]+)?$'
+allowed='^(feature|fix|chore)/[a-z0-9]+([a-z0-9-]*[a-z0-9]+)?$'
 
 if [[ "$branch" == "dev" || "$branch" == "stg" || "$branch" == "main" ]]; then
   echo "Direct commits to '$branch' are blocked. Create a feature branch first."
@@ -14,6 +14,6 @@ if [[ "$branch" == "dev" || "$branch" == "stg" || "$branch" == "main" ]]; then
 fi
 
 if [[ ! "$branch" =~ $allowed ]]; then
-  echo "Invalid branch '$branch'. Use: tipo/descripcion-corta (for example feat/login-flow)."
+  echo "Invalid branch '$branch'. Use: type/short-kebab-description (for example feature/login-flow)."
   exit 1
 fi

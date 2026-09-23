@@ -25,6 +25,8 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@playwright/test": "^1.63.0",
     "@types/jest": "^30.0.0",
     "@types/node": "latest",

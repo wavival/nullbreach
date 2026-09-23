@@ -5,16 +5,4 @@ if [[ "${SKIP_HOOKS:-}" == "true" ]]; then
   exit 0
 fi
 
-message="$(cat "$1")"
-pattern='^(feat|fix|chore|docs|refactor|test|ci|security)\((api|ui|db|auth|ci|deploy|docs|config|tests|security|deps|core)\): [a-zA-Z0-9][^[:cntrl:]]*$'
-
-if [[ "$message" == *"—"* ]]; then
-  echo "Commit messages cannot contain an em dash (—). Use a regular hyphen instead."
-  exit 1
-fi
-
-if [[ ! "$message" =~ $pattern ]]; then
-  echo "Invalid commit message. Use: tipo(scope): descripcion"
-  echo "Example: feat(auth): add credentials registration"
-  exit 1
-fi
+npx --no-install commitlint --edit "$1"

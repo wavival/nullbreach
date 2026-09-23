@@ -135,24 +135,25 @@ En los PR hacia `dev`, Playwright levanta la aplicación localmente y ejecuta lo
 La única secuencia permitida es:
 
 ```text
-feat/* | fix/* | chore/* | docs/* | refactor/* | test/* | ci/* | security/*
-                                  ↓
-                                 dev
-                                  ↓
-                                 stg
-                                  ↓
-                                main
+feature/* | fix/* | chore/*
+           ↓
+          dev
+           ↓
+          stg
+           ↓
+         main
 ```
 
 - No se hacen commits o merges directos a `dev`, `stg` ni `main`.
-- Las ramas usan `tipo/descripcion-corta`.
-- Los commits usan `tipo(scope): descripcion`, por ejemplo `feat(auth): add registration`.
+- Las ramas usan `tipo/descripcion-corta`, con `feature`, `fix` o `chore`.
+- Los commits usan `tipo(scope): descripcion`, por ejemplo `feature(auth): add registration`.
 - Scopes permitidos: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps` y `core`.
-- La entrada a `dev` usa squash merge; `stg → main` usa merge regular.
-- No promociones con checks pendientes, fallidos, cancelados o no disponibles. Un staging no desplegado no habilita `dev → stg`.
+- La entrada a `dev` puede activar auto-merge con squash cuando todos los checks requeridos están en verde.
+- `dev -> stg` y `stg -> main` se abren como PRs de promoción y Valentina los fusiona manualmente.
+- No promociones con checks pendientes, fallidos, cancelados o no disponibles. Un staging no desplegado no habilita `dev -> stg`.
 - Tras un merge exitoso a `dev`, se elimina la rama de trabajo local y remota. Al acabar un flujo solo quedan `dev`, `stg` y `main`.
 
-Los hooks se instalan con `npm run prepare`. Validan nombre de rama, Conventional Commits, em dash y patrones de secretos antes de push. Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para el proceso completo.
+Los hooks se instalan con `npm run prepare`. Validan nombre de rama, Conventional Commits con commitlint, ausencia de em dash y patrones de secretos antes de push. Consulta [CONTRIBUTING.md](CONTRIBUTING.md) y [AGENTS.md](AGENTS.md) para el proceso completo.
 
 ## CI/CD y despliegue
 
@@ -160,6 +161,8 @@ GitHub Actions ejecuta CI, cobertura, revisión estática, análisis de dependen
 
 - Staging: ambiente Preview del proyecto Vercel `nullbreach`.
 - Producción: ambiente Production del mismo proyecto Vercel `nullbreach`.
+- No hay configuración Railway activa en este repositorio.
+- No hay build Docker activo en este repositorio.
 
 Antes de activar despliegues reales, configura estos GitHub Secrets:
 
@@ -172,7 +175,7 @@ VERCEL_AUTOMATION_BYPASS_SECRET
 
 `VERCEL_AUTOMATION_BYPASS_SECRET` debe contener el secreto generado por Protection Bypass for Automation en Vercel. El workflow lo usa únicamente para los health checks y E2E del ambiente Preview.
 
-Configura también las variables de aplicación en ambos ambientes de Vercel. Sin esos secretos, el workflow falla y bloquea la promoción `dev → stg`.
+Configura también las variables de aplicación en ambos ambientes de Vercel. Sin esos secretos, el workflow falla y bloquea la promoción `dev -> stg`.
 
 ### URLs de autenticación en Vercel
 

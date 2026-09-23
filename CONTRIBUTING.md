@@ -18,22 +18,24 @@ Gracias por contribuir. Este proceso mantiene la aplicación segura, trazable y 
    ```bash
    git switch dev
    git pull --ff-only
-   git switch -c feat/descripcion-corta
+   git switch -c feature/descripcion-corta
    ```
 
-Prefijos válidos: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `ci` y `security`.
+Prefijos válidos: `feature`, `fix` y `chore`.
 
 ## Convenciones de commits
 
 Usa Conventional Commits estricto: `tipo(scope): descripcion`.
 
 ```text
-feat(auth): add registration validation
+feature(auth): add registration validation
 fix(api): reject empty chat questions
-docs(core): explain prisma migration
+chore(docs): explain prisma migration
 ```
 
-Scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`. No uses em dash (`—`) en asuntos. Los hooks bloquean formatos inválidos; `SKIP_HOOKS=true` es solo para mantenimiento excepcional y documentado.
+Tipos permitidos: `feature`, `fix`, `chore`.
+
+Scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`. No uses em dash en asuntos. Los hooks y CI bloquean formatos inválidos; `SKIP_HOOKS=true` es solo para mantenimiento excepcional y documentado.
 
 ## Validación local
 
@@ -50,18 +52,18 @@ Para E2E locales instala el navegador Playwright cuando sea necesario y ejecuta 
 
 1. Abre el PR solo hacia `dev`.
 2. Espera calidad, seguridad, revisión estática, pruebas y despliegues aplicables en verde.
-3. Fusiona por squash a `dev`.
-4. El único siguiente PR es `dev → stg`; después `stg → main` con merge regular.
+3. Los PR hacia `dev` pueden activar auto-merge con squash cuando todos los checks requeridos están en verde.
+4. El único siguiente PR es `dev -> stg`; después `stg -> main`. Valentina fusiona manualmente ambas promociones.
 
-No hagas push directo, merge manual ni PRs que salten ramas. Si un check falla, corrígelo en una rama permitida y vuelve a validar. Un staging sin deploy real no habilita promoción.
+No hagas push directo ni PRs que salten ramas. Si un check falla, corrígelo en una rama permitida y vuelve a validar. Un staging sin deploy real no habilita promoción.
 
 ## Cleanup obligatorio
 
 Tras confirmar que una rama de trabajo se fusionó con éxito a `dev`, elimínala local y remotamente:
 
 ```bash
-git push origin --delete tipo/descripcion-corta
-git branch -d tipo/descripcion-corta
+git push origin --delete feature/descripcion-corta
+git branch -d feature/descripcion-corta
 ```
 
 No elimines `dev`, `stg` ni `main`.

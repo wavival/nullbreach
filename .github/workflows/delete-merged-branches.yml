@@ -1,0 +1,26 @@
+name: Delete merged branches
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */12 * * *"
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete merged work branches
+        env:
+          GH_TOKEN: ${{ secrets.PROMOTE_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          gh pr list --repo "$REPOSITORY" --state merged --json headRefName,headRepositoryOwner,headRepository,isCrossRepository \
+            --jq '.[] | select(.isCrossRepository == false) | select(.headRefName | test("^(feature|fix|chore)/")) | .headRefName' |
+          while read -r branch; do
+            [ -n "$branch" ] || continue
+            gh api --method DELETE "repos/$REPOSITORY/git/refs/heads/$branch" || true
+          done
