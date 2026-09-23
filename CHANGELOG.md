@@ -2,6 +2,9 @@
 
 ## 2026-09-23
 
+- Allowed Dependabot source branches in branch-flow validation for PRs into `dev`.
+- Passed `GITLEAKS_LICENSE` to the gitleaks action.
+- Refreshed `.codex/CHECKPOINT.md` after the delivery audit.
 - Added commitlint with the NullBreach allowed types and scopes, plus local hook and CI enforcement.
 - Restricted work branch naming to `feature/*`, `fix/*`, and `chore/*`.
 - Kept auto-merge only for PRs into `dev`, using `PROMOTE_TOKEN`.
