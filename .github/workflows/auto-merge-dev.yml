@@ -11,11 +11,11 @@ permissions:
 
 jobs:
   enable-auto-merge:
-    if: "startsWith(github.event.pull_request.head.ref, 'feat/') || startsWith(github.event.pull_request.head.ref, 'fix/') || startsWith(github.event.pull_request.head.ref, 'chore/') || startsWith(github.event.pull_request.head.ref, 'docs/') || startsWith(github.event.pull_request.head.ref, 'refactor/') || startsWith(github.event.pull_request.head.ref, 'test/') || startsWith(github.event.pull_request.head.ref, 'ci/') || startsWith(github.event.pull_request.head.ref, 'security/')"
+    if: "startsWith(github.event.pull_request.head.ref, 'feature/') || startsWith(github.event.pull_request.head.ref, 'fix/') || startsWith(github.event.pull_request.head.ref, 'chore/')"
     runs-on: ubuntu-latest
     steps:
       - uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PROMOTE_TOKEN }}
           pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: squash

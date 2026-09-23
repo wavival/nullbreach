@@ -8,7 +8,7 @@ on:
         required: true
         type: string
   pull_request:
-    branches: [dev]
+    branches: [dev, stg, main]
 
 permissions:
   contents: read
