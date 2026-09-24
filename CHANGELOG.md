@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Added the Vercel custom `stg` environment and disabled automatic Git deployments.
+- Limited deployable environments to `stg` and production from `main`.
+- Added database migrations, health checks, and deployed E2E tests to both deployment workflows.
+- Pinned runtime dependencies, removed unused Axios code, and resolved high-severity dependency advisories.
+- Added input limits, security headers, a database health endpoint, and unit coverage.
+- Added English architecture, API, setup, contribution, agent, and environment documentation.
+- Added Vercel Microfrontends routing for `wavival.dev/nullbreach` with base-path-aware navigation, authentication, and API calls.
+- Separated staging and production into independent Prisma Postgres resources and environment-specific secrets.
+
 ## 2026-09-23
 
 - Added commitlint with the NullBreach allowed types and scopes, plus local hook and CI enforcement.

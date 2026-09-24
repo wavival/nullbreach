@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { appPath } from "@/lib/paths";
 
 export type ChatEntry = {
   id: string;
@@ -26,7 +27,7 @@ export default function ChatInterface({
     setError(null);
     setAnswer(null);
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch(appPath("/api/chat"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question }),

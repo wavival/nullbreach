@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { appPath } from "@/lib/paths";
 import ChatInterface, { type ChatEntry } from "./ChatInterface";
 import HistorySidebar from "./HistorySidebar";
 
 export default function DashboardClient() {
   const [history, setHistory] = useState<ChatEntry[]>([]);
   useEffect(() => {
-    fetch("/api/history")
+    fetch(appPath("/api/history"))
       .then(async (response) =>
         response.ok ? response.json() : { history: [] },
       )

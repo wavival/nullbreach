@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { appPath } from "@/lib/paths";
 
 export default function CodeAnalyzer() {
   const [code, setCode] = useState("");
@@ -14,7 +15,7 @@ export default function CodeAnalyzer() {
     setError(null);
     setResult(null);
     try {
-      const response = await fetch("/api/analyze", {
+      const response = await fetch(appPath("/api/analyze"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),

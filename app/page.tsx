@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { appPath } from "@/lib/paths";
 
 export default function HomePage() {
   return (
@@ -17,13 +18,13 @@ export default function HomePage() {
         <div className="mt-9 flex justify-center gap-3">
           <Link
             className="rounded-lg bg-cyan-500 px-5 py-3 font-semibold text-slate-950"
-            href="/register"
+            href={appPath("/register")}
           >
             Create account
           </Link>
           <Link
             className="rounded-lg border border-slate-500 px-5 py-3 font-semibold"
-            href="/login"
+            href={appPath("/login")}
           >
             Sign in
           </Link>
