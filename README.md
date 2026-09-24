@@ -105,7 +105,7 @@ npm run test:e2e
 npm audit --audit-level=high
 ```
 
-`npm run verify` runs linting, formatting checks, Next.js route type generation, TypeScript, Prisma validation, Jest coverage, and the production Webpack build. Playwright runs separately because it starts the application or targets a deployed environment.
+`npm run verify` runs linting, formatting checks, Next.js route type generation, Prisma validation and client generation, TypeScript, Jest coverage, and the production Webpack build. Playwright runs separately because it starts the application or targets a deployed environment.
 
 ## Delivery flow
 
