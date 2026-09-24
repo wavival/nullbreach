@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { getCurrentSession } from "@/lib/auth";
 import { analyzeCode } from "@/lib/openai";
 import { prisma } from "@/lib/prisma";
-import { isNonEmptyString } from "@/lib/validation";
+import { hasValidLength, isNonEmptyString } from "@/lib/validation";
+
+const MAX_CODE_LENGTH = 20_000;
 
 export async function POST(request: Request) {
   const session = await getCurrentSession();
@@ -11,6 +13,11 @@ export async function POST(request: Request) {
   const { code } = await request.json().catch(() => ({}));
   if (!isNonEmptyString(code))
     return NextResponse.json({ error: "code is required" }, { status: 400 });
+  if (!hasValidLength(code, MAX_CODE_LENGTH))
+    return NextResponse.json(
+      { error: `code must be ${MAX_CODE_LENGTH} characters or fewer` },
+      { status: 413 },
+    );
   try {
     const vulnerabilities = await analyzeCode(code.trim());
     const entry = await prisma.codeAnalysis.create({

@@ -1,45 +1,67 @@
-# Guía de ingeniería de NullBreach
+# NullBreach Engineering Guide
 
-## Producto y arquitectura
+## Product and architecture
 
-NullBreach es una aplicación Next.js App Router consolidada desde un frontend Vite/React y una API Django REST. La raíz del repositorio contiene la única aplicación desplegable.
+NullBreach is a single Next.js App Router application. The repository root contains the only deployable application.
 
-- UI y rutas: `app/` y `components/`.
-- Autenticación: NextAuth Credentials con sesiones JWT en cookies `httpOnly`.
-- Datos: Prisma y PostgreSQL/Supabase; esquema en `prisma/schema.prisma`.
-- IA: OpenAI SDK solo en `lib/openai.ts` y rutas de servidor.
-- Pruebas: Jest en `__tests__/unit`, Playwright en `__tests__/e2e`.
+- UI and routes: `app/` and `components/`.
+- Authentication: NextAuth Credentials with JWT sessions in HTTP-only cookies.
+- Data: Prisma ORM with separate Vercel Marketplace Prisma Postgres resources for production (`prisma-postgres-amber-crystal`) and staging (`nullbreach-stg-postgres`), with the schema in `prisma/schema.prisma`.
+- AI: the OpenAI SDK is used only by server-side modules and route handlers.
+- Tests: Jest in `__tests__/unit` and Playwright in `__tests__/e2e`.
+- API contract: `docs/api.md`.
+- Design decisions: `DESIGN.md`.
 
-No reintroducir clientes Django, Vite/Astro, claves de IA en cliente ni tokens de autenticación en almacenamiento del navegador.
+Do not reintroduce Django, Vite, Astro, client-side AI keys, or browser-managed authentication tokens.
 
-## Convenciones
+## Runtime and commands
 
-- Ramas: `feat|fix|chore|docs|refactor|test|ci|security/descripcion-corta`.
-- Commits: `tipo(scope): descripcion`.
-- Scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`.
-- No usar em dash en el asunto de un commit.
-- Ejecutar `npm run prepare` después de clonar para instalar hooks.
-- Ejecutar `npm run lint`, `npm run test:coverage`, `npm run format:check` y `npm run build` antes de abrir un PR.
+Use Node.js 24.x and npm 11 or newer.
 
-## Flujo obligatorio
+```bash
+npm ci
+npm run prepare
+npm run verify
+npm run test:e2e
+```
 
-Solo se permite `feature/* → dev → stg → main`. No hacer commits directos a ramas de entorno.
+Use `npm run db:migrate:deploy` for committed migrations. Create schema changes with a new Prisma migration and never edit a migration already applied to a shared environment.
 
-- Feature a `dev`: squash merge tras checks verdes.
-- `dev` a `stg`: únicamente tras deploy de staging exitoso y real.
-- `stg` a `main`: merge regular tras checks, revisión y validación de staging.
-- Si un check falla, está pendiente, cancelado o no disponible, detener el flujo y corregir en una rama permitida. Nunca ignorar un fallo para promocionar.
-- Tras fusionar una rama de trabajo en `dev`, eliminarla local y remotamente. No borrar `dev`, `stg` ni `main`.
+## Conventions
 
-`AGENTS.md` es la fuente obligatoria de estas reglas para automatización.
+- Work branches: `feature/*`, `fix/*`, or `chore/*`.
+- Commits: `type(scope): message`.
+- Allowed types: `feature`, `fix`, and `chore`.
+- Allowed scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, and `core`.
+- Commit headers and generated documentation must not contain em dashes.
+- Remove unused dependencies, variables, imports, routes, and documentation in the same change that makes them obsolete.
 
-## Datos y secretos
+## Mandatory delivery flow
 
-- Nunca versionar `.env.local`, `DATABASE_URL`, `NEXTAUTH_SECRET` u `OPENAI_API_KEY`.
-- Usar `.env.example` como plantilla sin valores sensibles.
-- Crear cambios de esquema mediante migraciones Prisma; no modificar migraciones aplicadas.
-- Los despliegues Vercel requieren secretos GitHub y variables Vercel. Sin configuración real, no promover a staging.
+Only `feature/* -> dev -> stg -> main` is permitted. Never commit directly to an environment branch.
 
-## Revisión de cambios
+- Work PRs target `dev` and may use squash merge after every required check passes.
+- `dev -> stg` and `stg -> main` use promotion PRs.
+- A source commit cannot advance while any required check is pending, failing, cancelled, skipped after failure, or unavailable.
+- `stg` must deploy successfully before a `stg -> main` promotion.
+- Delete merged work branches locally and remotely after confirming the merge into `dev`.
 
-Priorizar autenticación, autorización de rutas API, entradas no confiables, secretos, esquema Prisma, compatibilidad de migraciones y efectos en CI/CD. Mantener código y documentación para colaboradores en español.
+## Vercel environments
+
+Only two deployable environments are used:
+
+- `preview`: the Vercel Preview environment used only by the `stg` branch.
+- `production`: the Vercel production environment bound to `main`.
+
+Automatic Git deployments are disabled in `vercel.json`. GitHub Actions performs all builds, migrations, deployments, health checks, and deployed E2E tests. Do not deploy `dev`, feature branches, Dependabot branches, or previews from branches other than `stg`.
+
+The Vercel project is a child microfrontend of `wavival-dev`. Its public base path is `/nullbreach`; keep `microfrontends.json`, `lib/paths.ts`, Next.js rewrites, NextAuth `basePath`, browser links, and API requests synchronized. The default application repository owns the production routing source of truth.
+
+## Secrets and data
+
+- Never commit `.env.local`, `DATABASE_URL`, `NEXTAUTH_SECRET`, `OPENAI_API_KEY`, Vercel tokens, or database credentials.
+- Keep `.env.example` explanatory and free of real credentials.
+- Variables prefixed with `NEXT_PUBLIC_` are browser-visible and must never contain secrets.
+- Treat authentication, authorization, untrusted input, migrations, and CI/CD as security-sensitive changes.
+
+`AGENTS.md` is the authoritative delivery policy for automated agents.

@@ -1,76 +1,98 @@
-# Contribuir a NullBreach
+# Contributing to NullBreach
 
-Gracias por contribuir. Este proceso mantiene la aplicación segura, trazable y desplegable.
+Thank you for contributing. This process keeps changes secure, traceable, and deployable.
 
-## Antes de empezar
+## Prerequisites
 
-1. Lee [README.md](README.md), [CLAUDE.md](CLAUDE.md) y [AGENTS.md](AGENTS.md).
-2. Configura `.env.local` desde `.env.example`; nunca copies secretos a archivos versionados.
-3. Instala dependencias y hooks:
+- Node.js 24.x
+- npm 11 or newer
+- Access to the existing Prisma Postgres resource, or a compatible local PostgreSQL database
+- An OpenAI API key for live AI flows
 
-   ```bash
-   npm install
-   npm run prepare
-   ```
+## Setup
 
-4. Crea una rama desde `dev`:
+```bash
+git clone git@github.com:wavival/nullbreach.git
+cd nullbreach
+nvm use
+npm ci
+npm run prepare
+cp .env.example .env.local
+npm run db:migrate:deploy
+```
 
-   ```bash
-   git switch dev
-   git pull --ff-only
-   git switch -c feature/descripcion-corta
-   ```
+Replace the safe placeholders in `.env.local` with local-only credentials. Never commit that file.
 
-Prefijos válidos: `feature`, `fix` y `chore`.
+## Branches
 
-## Convenciones de commits
+Create every work branch from an up-to-date `dev` branch:
 
-Usa Conventional Commits estricto: `tipo(scope): descripcion`.
+```bash
+git switch dev
+git pull --ff-only
+git switch -c feature/short-description
+```
+
+Valid prefixes are `feature`, `fix`, and `chore`. Dependabot branches are accepted only when GitHub creates them.
+
+## Commits
+
+Use strict Conventional Commits:
 
 ```text
 feature(auth): add registration validation
-fix(api): reject empty chat questions
-chore(docs): explain prisma migration
+fix(api): reject oversized chat questions
+chore(docs): document the health endpoint
 ```
 
-Tipos permitidos: `feature`, `fix`, `chore`.
+Allowed types are `feature`, `fix`, and `chore`.
 
-Scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`. No uses em dash en asuntos. Los hooks y CI bloquean formatos inválidos; `SKIP_HOOKS=true` es solo para mantenimiento excepcional y documentado.
+Allowed scopes are `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, and `core`.
 
-## Validación local
+Do not use em dashes in commit headers or generated documentation. Local hooks and CI enforce branch names, commit format, and common secret patterns.
+
+## Verification
+
+Run the complete local gate before opening a pull request:
 
 ```bash
-npm run lint
-npm run format:check
-npm run test:coverage
-npm run build
+npm run verify
+npm run test:e2e
+npm audit --audit-level=high
 ```
 
-Para E2E locales instala el navegador Playwright cuando sea necesario y ejecuta `npm run test:e2e`. Las pruebas contra staging necesitan `E2E_BASE_URL` y una instancia configurada.
+Review the full diff for accidental credentials, generated files, dead code, stale documentation, and unrelated changes.
 
-## Pull requests y promoción
+## Pull requests
 
-1. Abre el PR solo hacia `dev`.
-2. Espera calidad, seguridad, revisión estática, pruebas y despliegues aplicables en verde.
-3. Los PR hacia `dev` pueden activar auto-merge con squash cuando todos los checks requeridos están en verde.
-4. El único siguiente PR es `dev -> stg`; después `stg -> main`. Valentina fusiona manualmente ambas promociones.
+1. Open work PRs only against `dev`.
+2. Wait for branch validation, commitlint, quality, coverage, build, E2E, static review, dependency audit, and secret scanning.
+3. Merge only after every required check succeeds.
+4. Promote with `dev -> stg`, then `stg -> main`.
+5. Do not merge a promotion while any check or applicable deployment is incomplete.
+6. Delete the merged work branch locally and remotely after the merge into `dev` is confirmed.
 
-No hagas push directo ni PRs que salten ramas. Si un check falla, corrígelo en una rama permitida y vuelve a validar. Un staging sin deploy real no habilita promoción.
+The `stg` and `main` branches are permanent and must never be deleted.
 
-## Cleanup obligatorio
+## Database changes
 
-Tras confirmar que una rama de trabajo se fusionó con éxito a `dev`, elimínala local y remotamente:
+Create a new migration for every schema change:
 
 ```bash
-git push origin --delete feature/descripcion-corta
-git branch -d feature/descripcion-corta
+npx prisma migrate dev --name short-description
+npm run db:validate
 ```
 
-No elimines `dev`, `stg` ni `main`.
+Never rewrite an applied migration. Deployment workflows run `prisma migrate deploy` before publishing the new artifact.
 
-## Seguridad y datos
+## API changes
 
-- No expongas secretos, credenciales, URLs privadas o datos de usuario en PRs, logs o issues.
-- Reporta vulnerabilidades de manera privada.
-- Para Prisma, crea una migración nueva y no modifiques migraciones aplicadas.
-- Revisa con especial cuidado autenticación, autorización API, validación de entradas y cambios de CI/CD.
+Update [docs/api.md](docs/api.md) whenever a route, method, authentication rule, request body, response body, limit, or status code changes. Update `.env.example`, README, CLAUDE, AGENTS, and DESIGN when their documented contract changes.
+
+## Security reports
+
+Do not open a public issue containing secrets, personal data, private URLs, or actionable exploit details. Use GitHub's private vulnerability reporting for suspected security issues.
+
+## License
+
+By contributing, you agree that your contribution is licensed under the repository's [MIT License](LICENSE).

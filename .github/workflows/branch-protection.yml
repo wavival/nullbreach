@@ -18,7 +18,7 @@ jobs:
           HEAD: ${{ github.event.pull_request.head.ref }}
         run: |
           case "$BASE" in
-            dev) allowed='^(feature|fix|chore)/[a-z0-9]+([a-z0-9-]*[a-z0-9]+)?$' ;;
+            dev) allowed='^((feature|fix|chore)/[a-z0-9]+([a-z0-9-]*[a-z0-9]+)?|dependabot/.+)$' ;;
             stg) allowed='^dev$' ;;
             main) allowed='^stg$' ;;
             *) echo "Unsupported target branch: $BASE"; exit 1 ;;

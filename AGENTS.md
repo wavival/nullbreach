@@ -1,22 +1,35 @@
 # NullBreach Delivery Rules
 
-## Promotion gate - mandatory
+## Promotion gate
 
-Never create, merge, push, or otherwise promote changes to the next environment branch while any required check for the current source commit is pending, failing, cancelled, skipped because of a failure, or unavailable.
+Never create, merge, push, or otherwise promote changes to the next environment branch while a required check for the current source commit is pending, failing, cancelled, skipped after a failure, or unavailable.
 
-The only valid direction is `feature/* -> dev -> stg -> main`. A source commit may advance only after all required quality, security, test, review, and applicable deployment checks have concluded successfully. A deployment that was not configured or was skipped is not evidence that the source is eligible for promotion.
+The only valid direction is `feature/* -> dev -> stg -> main`. A source commit may advance only after all required quality, security, test, review, and applicable deployment checks finish successfully.
 
-When a check fails, stop the promotion flow. Diagnose and correct the failure on a permitted source branch, re-run the full check set, and verify every required check is green before proceeding.
+When a check fails, stop the promotion flow. Correct the failure on a permitted source branch, rerun the complete check set, and verify every required check before continuing.
 
 ## Branch model
 
 - `main` is production.
 - `stg` is staging.
-- `dev` is the integration base for every `feature/*`, `fix/*`, and `chore/*` branch.
+- `dev` is the integration base for `feature/*`, `fix/*`, and `chore/*`.
 - Every work PR targets `dev`.
-- `dev` to `stg` and `stg` to `main` are promotion PRs, never direct pushes.
-- `dev` PRs may auto-merge only after every required check is green.
-- `stg` and `main` promotions are manually merged by Valentina until she explicitly changes this policy.
+- `dev -> stg` and `stg -> main` are promotion PRs, never direct pushes.
+- Work PRs may auto-merge into `dev` only after every required check passes.
+- Promotion PRs are merged only after their complete check set passes.
+
+## Vercel environments
+
+Only two deployable environments are permitted:
+
+- `preview`: Vercel Preview environment, used only by the `stg` branch.
+- `production`: Vercel production environment, branch `main`.
+
+Automatic Git deployments are disabled. GitHub Actions is the only deployment path. Never deploy `dev`, work branches, Dependabot branches, or Preview deployments from branches other than `stg`.
+
+Staging and production must never share a Prisma Postgres resource, session secret, or OpenAI API key. Production uses `prisma-postgres-amber-crystal`; staging uses `nullbreach-stg-postgres`.
+
+The application is mounted at `/nullbreach` as a Vercel child microfrontend of `wavival-dev`. Keep `microfrontends.json`, `lib/paths.ts`, Next.js rewrites, NextAuth configuration, browser links, and API calls aligned with that public base path.
 
 ## Commit convention
 
@@ -30,7 +43,7 @@ Allowed types: `feature`, `fix`, `chore`.
 
 Allowed scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`.
 
-Commit messages and generated docs must not include em dashes.
+Commit headers and generated documentation must not contain em dashes.
 
 ## Required checks
 
@@ -38,18 +51,23 @@ Branch protection for `dev`, `stg`, and `main` must require:
 
 - branch flow validation
 - commitlint
-- lint, format, unit coverage, and Next.js build
+- lint, format, TypeScript, Prisma validation, unit coverage, and Next.js build
 - Playwright E2E tests
 - automated static review
 - secret and dependency scanning
+- successful staging deployment before production promotion
 
-This app is a Next.js App Router, React, TypeScript, Prisma, PostgreSQL/Supabase, NextAuth, Jest, Playwright, GitHub Actions, and Vercel project. Use Node.js 20 or newer locally. CI currently uses Node.js 20 for quality checks and Node.js 22 for Vercel deploy jobs.
+Use Node.js 24.x and npm 11 or newer. The stack is Next.js App Router, React, TypeScript, Prisma ORM, Prisma Postgres, NextAuth, Jest, Playwright, GitHub Actions, and Vercel.
 
-## Cleanup after merge - mandatory
+## Documentation
 
-When a work branch has been successfully merged into `dev` and the merge is confirmed, delete that branch from both the remote and the local checkout. Perform cleanup only after the successful merge; never delete a branch with an open PR, pending checks, unmerged work, or one of the permanent environment branches.
+Keep `README.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `DESIGN.md`, `docs/api.md`, and `.env.example` in English and synchronized with behavior. Remove stale instructions in the same change that invalidates them.
 
-The permanent branches are `dev`, `stg`, and `main`. At the end of a completed delivery flow, no `feature/*`, `fix/*`, or `chore/*` branch may remain locally or remotely.
+## Cleanup after merge
+
+After a work branch merges successfully into `dev`, delete it from the remote and local checkout. Never delete a branch with an open PR, pending checks, unmerged work, or one of the permanent branches.
+
+The permanent branches are `dev`, `stg`, and `main`. At the end of a completed delivery flow, no merged `feature/*`, `fix/*`, or `chore/*` branch may remain locally or remotely.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
