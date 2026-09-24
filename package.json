@@ -24,7 +24,7 @@
     "test": "npm run test:unit",
     "test:unit": "jest --runInBand",
     "test:coverage": "jest --coverage --runInBand",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run db:generate && playwright test",
     "db:validate": "DATABASE_URL=${DATABASE_URL:-postgresql://validation:validation@localhost:5432/nullbreach} prisma validate",
     "db:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://validation:validation@localhost:5432/nullbreach} prisma generate",
     "db:migrate:deploy": "prisma migrate deploy",
