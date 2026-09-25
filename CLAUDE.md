@@ -42,6 +42,7 @@ Only `feature/* -> dev -> stg -> main` is permitted. Never commit directly to an
 
 - Work PRs target `dev` and may use squash merge after every required check passes.
 - `dev -> stg` and `stg -> main` use promotion PRs.
+- Commitlint validates every work commit and the Conventional Commit title of each promotion PR, so historical commits do not block environment synchronization.
 - A source commit cannot advance while any required check is pending, failing, cancelled, skipped after failure, or unavailable.
 - `stg` must deploy successfully before a `stg -> main` promotion.
 - Delete merged work branches locally and remotely after confirming the merge into `dev`.

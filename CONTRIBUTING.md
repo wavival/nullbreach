@@ -66,7 +66,7 @@ Review the full diff for accidental credentials, generated files, dead code, sta
 ## Pull requests
 
 1. Open work PRs only against `dev`.
-2. Wait for branch validation, commitlint, quality, coverage, build, E2E, static review, dependency audit, and secret scanning.
+2. Wait for branch validation, commitlint, quality, coverage, build, E2E, static review, dependency audit, and secret scanning. Commitlint validates all work commits and the title of promotion PRs.
 3. Merge only after every required check succeeds.
 4. Promote with `dev -> stg`, then `stg -> main`.
 5. Do not merge a promotion while any check or applicable deployment is incomplete.

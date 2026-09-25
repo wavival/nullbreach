@@ -120,6 +120,7 @@ feature/* | fix/* | chore/*
 
 - Work PRs target `dev`.
 - `dev -> stg` and `stg -> main` are regular promotion PRs.
+- Commitlint checks all commits in work PRs and the Conventional Commit title in promotion PRs.
 - No branch advances while a required check is pending, failing, cancelled, skipped after failure, or unavailable.
 - A merge into `stg` deploys the Vercel `preview` environment, applies Prisma migrations during the remote build, checks `/nullbreach/api/health`, and runs Playwright.
 - A merge into `main` deploys production, applies migrations during the remote build, checks health, and runs Playwright again.

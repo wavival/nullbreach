@@ -50,7 +50,7 @@ Commit headers and generated documentation must not contain em dashes.
 Branch protection for `dev`, `stg`, and `main` must require:
 
 - branch flow validation
-- commitlint
+- commitlint for every work commit and each promotion PR title
 - lint, format, TypeScript, Prisma validation, unit coverage, and Next.js build
 - Playwright E2E tests
 - automated static review

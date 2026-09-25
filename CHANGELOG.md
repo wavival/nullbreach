@@ -10,6 +10,7 @@
 - Added English architecture, API, setup, contribution, agent, and environment documentation.
 - Added Vercel Microfrontends routing for `wavival.dev/nullbreach` with base-path-aware navigation, authentication, and API calls.
 - Separated staging and production into independent Prisma Postgres resources and environment-specific secrets.
+- Changed promotion commitlint to validate the Conventional Commit PR title while retaining full commit-range validation for work PRs.
 
 ## 2026-09-23
 
