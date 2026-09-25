@@ -12,11 +12,11 @@
       "routing": [
         {
           "group": "nullbreach",
-          "paths": ["/nullbreach/:path*"]
+          "paths": ["/nullbreach", "/nullbreach/:path*"]
         }
       ],
       "development": {
-        "fallback": "null-breach.vercel.app",
+        "fallback": "nullbreach-wavivals-projects.vercel.app",
         "local": 3000
       }
     }
