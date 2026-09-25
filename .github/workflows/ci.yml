@@ -3,17 +3,7 @@ name: CI
 on:
   workflow_dispatch:
   push:
-    branches:
-      [
-        "feat/**",
-        "fix/**",
-        "chore/**",
-        "docs/**",
-        "refactor/**",
-        "test/**",
-        "ci/**",
-        "security/**",
-      ]
+    branches: [dev, stg, "feature/**", "fix/**", "chore/**"]
   pull_request:
     branches: [dev, stg, main]
 
@@ -22,24 +12,40 @@ permissions:
   pull-requests: write
 
 jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --ignore-scripts
+      - name: Validate work pull request commits
+        if: github.base_ref == 'dev'
+        run: npx commitlint --from "${{ github.event.pull_request.base.sha }}" --to "${{ github.event.pull_request.head.sha }}" --verbose
+
+      - name: Validate promotion pull request title
+        if: github.base_ref == 'stg' || github.base_ref == 'main'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s\n' "$PR_TITLE" | npx commitlint --verbose
+
   quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --ignore-scripts
-      - name: Generate Prisma Client
-        run: npx prisma generate
-        env:
-          DATABASE_URL: postgresql://ci:ci@localhost:5432/nullbreach
-      - run: npm run lint
-      - run: npm run format:check
-      - run: npm run test:coverage
-      - run: npm run build
+      - run: npm run verify
         env:
           DATABASE_URL: postgresql://ci:ci@localhost:5432/nullbreach
           NEXTAUTH_SECRET: ci-only-secret-not-for-production

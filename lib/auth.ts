@@ -3,10 +3,11 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
+import { appPath } from "@/lib/paths";
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
-  pages: { signIn: "/login", newUser: "/register" },
+  pages: { signIn: appPath("/login"), newUser: appPath("/register") },
   providers: [
     CredentialsProvider({
       name: "Email and password",

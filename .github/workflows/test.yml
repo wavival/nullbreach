@@ -8,7 +8,9 @@ on:
         required: true
         type: string
   pull_request:
-    branches: [dev]
+    branches: [dev, stg, main]
+  push:
+    branches: [dev, stg]
 
 permissions:
   contents: read
@@ -24,7 +26,6 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --ignore-scripts
-      - run: npm run test:coverage
       - run: npx playwright install --with-deps chromium
       - name: Run E2E tests
         run: npm run test:e2e
