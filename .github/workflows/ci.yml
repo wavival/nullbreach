@@ -52,7 +52,7 @@ jobs:
           NEXTAUTH_URL: http://localhost:3000
           OPENAI_API_KEY: sk-ci-placeholder
           OPENAI_MODEL: gpt-5
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-${{ github.sha }}
