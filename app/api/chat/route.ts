@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { getCurrentSession } from "@/lib/auth";
 import { askOpenAI, OPENAI_MODEL } from "@/lib/openai";
 import { prisma } from "@/lib/prisma";
-import { isNonEmptyString } from "@/lib/validation";
+import { hasValidLength, isNonEmptyString } from "@/lib/validation";
+
+const MAX_QUESTION_LENGTH = 4_000;
 
 export async function POST(request: Request) {
   const session = await getCurrentSession();
@@ -13,6 +15,11 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "question is required" },
       { status: 400 },
+    );
+  if (!hasValidLength(question, MAX_QUESTION_LENGTH))
+    return NextResponse.json(
+      { error: `question must be ${MAX_QUESTION_LENGTH} characters or fewer` },
+      { status: 413 },
     );
   try {
     const response = await askOpenAI(question.trim());

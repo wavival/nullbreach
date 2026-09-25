@@ -1,6 +1,8 @@
 name: Automated code review
 
 on:
+  push:
+    branches: [dev, stg]
   pull_request:
     branches: [dev, stg, main]
     types: [opened, reopened, synchronize]
@@ -14,15 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Review exposed environment files and unnecessary imports
+      - name: Review exposed environment files and hard-coded secrets
         id: review
         run: |
           issues=""
-          if git ls-files | grep -Eq '(^|/)\.env($|\.)' ; then issues="$issues\n- A tracked .env file was found."; fi
+          if git ls-files | grep -Ev '(^|/)\.env\.example$' | grep -Eq '(^|/)\.env($|\.)'; then issues="$issues\n- A tracked .env file was found."; fi
           if rg -n '(OPENAI_API_KEY|NEXTAUTH_SECRET|DATABASE_URL)\s*=\s*["'"'"'][^$][^"'"'"']+' --glob '!*.example' --glob '!package-lock.json' .; then issues="$issues\n- Potential hard-coded secret or connection value found."; fi
           if [ -z "$issues" ]; then issues="\n- No static security or environment exposure findings."; fi
           printf 'body<<EOF\n%s\nEOF\n' "$issues" >> "$GITHUB_OUTPUT"
-      - name: Comment without blocking merge
+          if [ "$issues" != "\n- No static security or environment exposure findings." ]; then
+            exit 1
+          fi
+      - name: Report static review
+        if: always() && github.event_name == 'pull_request'
         uses: actions/github-script@v7
         env:
           REVIEW_BODY: ${{ steps.review.outputs.body }}

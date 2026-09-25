@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
+import { appPath } from "@/lib/paths";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function LoginPage() {
     });
     setLoading(false);
     if (result?.error) setError("Invalid email or password.");
-    else router.push("/dashboard");
+    else router.push(appPath("/dashboard"));
   }
   return (
     <main className="grid min-h-screen place-items-center p-6">
@@ -58,7 +59,7 @@ export default function LoginPage() {
         </button>
         <p className="text-sm text-slate-400">
           New here?{" "}
-          <Link className="text-cyan-400" href="/register">
+          <Link className="text-cyan-400" href={appPath("/register")}>
             Create an account
           </Link>
         </p>

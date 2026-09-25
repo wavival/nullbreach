@@ -1,201 +1,143 @@
 # NullBreach
 
-NullBreach es un asistente de ciberseguridad full-stack. Permite a usuarios autenticados consultar dudas de desarrollo seguro y analizar fragmentos de código para identificar riesgos OWASP, impacto y medidas de remediación.
+NullBreach is an open-source AppSec assistant for authenticated users. It answers secure-development questions and analyzes code for OWASP-aligned risks, impact, and remediation guidance.
 
-La aplicación se ejecuta como una única unidad Next.js: la interfaz, autenticación, rutas de API y capa de despliegue viven en este repositorio.
+The application is a single Next.js deployment containing the UI, authentication, API routes, Prisma data layer, and OpenAI integration. Vercel Microfrontends mounts it under the existing `wavival.dev` domain without coupling its deployment lifecycle to the portfolio.
 
-## Índice
+## Live services
 
-- [Migración](#migración)
-- [Arquitectura](#arquitectura)
-- [Estructura](#estructura-del-repositorio)
-- [Desarrollo local](#requisitos-y-desarrollo-local)
-- [Variables de entorno](#variables-de-entorno)
-- [Base de datos](#base-de-datos)
-- [API](#api)
-- [Calidad](#calidad-y-pruebas)
-- [Flujo Git](#flujo-git-y-entregas)
-- [CI/CD](#cicd-y-despliegue)
-- [Seguridad](#seguridad)
+- Production: [wavival.dev/nullbreach](https://wavival.dev/nullbreach)
+- Direct production project URL: [null-breach.vercel.app/nullbreach](https://null-breach.vercel.app/nullbreach)
+- Staging: [nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach](https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach)
+- Production deployments: [deployment workflow](https://github.com/wavival/nullbreach/actions/workflows/deploy-production.yml)
+- Vercel project: [wavivals-projects/nullbreach](https://vercel.com/wavivals-projects/nullbreach)
+- API reference: [docs/api.md](docs/api.md)
+- Production health: [`/nullbreach/api/health`](https://wavival.dev/nullbreach/api/health)
 
-## Migración
+Staging uses the Vercel `preview` environment with variables scoped to the `stg` branch. Production uses the Vercel `production` environment and the `main` branch. They use separate Prisma Postgres resources and separate secrets. Automatic Git deployments are disabled, so other branches do not create Vercel deployments.
 
-### Estructura anterior
+## Architecture
 
-El proyecto anterior era un monorepo dividido en dos aplicaciones independientes:
+| Layer          | Technology                                     | Responsibility                           |
+| -------------- | ---------------------------------------------- | ---------------------------------------- |
+| Application    | Next.js App Router                             | UI, server rendering, and route handlers |
+| Authentication | NextAuth Credentials                           | JWT sessions in HTTP-only cookies        |
+| Persistence    | Prisma ORM and Prisma Postgres                 | Users, chat history, and code analyses   |
+| AI             | OpenAI Responses API                           | Security chat and code analysis          |
+| Observability  | Vercel Web Analytics                           | Privacy-aware traffic measurement        |
+| Styling        | Tailwind CSS                                   | Responsive interface                     |
+| Quality        | Jest, Playwright, ESLint, Prettier, TypeScript | Automated verification                   |
+| Delivery       | GitHub Actions and Vercel                      | Gated promotion and deployment           |
 
-- `apps/frontend`: cliente Vite + React para la interfaz, navegación, almacenamiento de tokens y consumo de API.
-- `apps/backend`: API Django REST para autenticación, chat, análisis de código, rate limiting y persistencia.
+See [DESIGN.md](DESIGN.md) for system boundaries and design decisions.
 
-También existían proyectos separados para el frontend y la API. Esa distribución requería builds, dependencias, variables de entorno y despliegues distintos; la autenticación cruzaba una frontera cliente/API adicional y las pruebas y documentación se duplicaban.
-
-### Por qué se migró
-
-La migración reduce el coste operativo y unifica el modelo de seguridad:
-
-- Un solo runtime y un despliegue para interfaz y endpoints.
-- Sesiones NextAuth en cookies `httpOnly`, sin tokens de sesión gestionados por el navegador.
-- Prisma como acceso tipado a PostgreSQL/Supabase y migraciones versionadas.
-- OpenAI SDK solo en servidor, sin exponer la clave de IA.
-- Un pipeline común de formato, lint, pruebas, build, escaneo de secretos y promoción de ramas.
-
-El código Django, Vite y Astro fue retirado cuando sus responsabilidades quedaron cubiertas por la aplicación Next.js. La migración inicial de Prisma se incluye en el repositorio, pero no se aplica hasta configurar una `DATABASE_URL` real.
-
-## Arquitectura
-
-| Capa           | Tecnología                         | Responsabilidad                                       |
-| -------------- | ---------------------------------- | ----------------------------------------------------- |
-| Aplicación     | Next.js App Router                 | UI, rendering de servidor y rutas API                 |
-| Autenticación  | NextAuth Credentials               | Sesión JWT en cookie `httpOnly` y protección de rutas |
-| Persistencia   | Prisma + PostgreSQL/Supabase       | Usuarios, historial de chat y análisis                |
-| IA             | OpenAI Responses API               | Chat y análisis de código                             |
-| Estilos        | Tailwind CSS                       | Diseño responsive                                     |
-| Calidad        | Jest, Playwright, ESLint, Prettier | Pruebas, cobertura, lint y formato                    |
-| Automatización | GitHub Actions y Vercel            | CI, seguridad y despliegues                           |
-
-## Estructura del repositorio
+## Repository structure
 
 ```text
-app/
-  (auth)/                 # Login y registro
-  (protected)/            # Dashboard y analizador protegidos por sesión
-  api/                    # Auth, chat, analyze e history
-components/               # Componentes reutilizables
-lib/                      # Auth, Prisma, OpenAI y validaciones
-prisma/                   # Esquema y migración PostgreSQL inicial
-__tests__/unit/           # Pruebas Jest
-__tests__/e2e/            # Pruebas Playwright
-.github/workflows/        # CI, seguridad, promoción y despliegue
-.githooks/                # Validación local de ramas, commits y secretos
-AGENTS.md                 # Reglas obligatorias para agentes
-CLAUDE.md                 # Convenciones de ingeniería
+app/                    Next.js pages, layouts, and API route handlers
+components/             Reusable React components
+lib/                    Authentication, Prisma, OpenAI, and validation
+prisma/                 Database schema and migrations
+__tests__/unit/         Jest unit tests
+__tests__/e2e/          Playwright end-to-end tests
+docs/api.md             HTTP API reference
+.github/workflows/      CI, security, promotion gates, and deployments
+.githooks/              Local branch, commit, and secret checks
+microfrontends.json     Shared-domain routing contract with wavival.dev
 ```
 
-## Requisitos y desarrollo local
+## Requirements
 
-- Node.js 20 o superior.
-- PostgreSQL/Supabase para flujos que persisten datos.
-- Clave de OpenAI para chat y análisis reales.
+- Node.js 24.x
+- npm 11 or newer
+- Access to the existing Prisma Postgres resource, or a compatible local PostgreSQL database
+- An OpenAI API key for chat and analysis
+- Vercel CLI access only when managing deployments or remote environment variables
+
+## Local development
 
 ```bash
-cp .env.example .env.local
-npm install
+nvm use
+npm ci
 npm run prepare
-npx prisma migrate deploy
+cp .env.example .env.local
+npm run db:migrate:deploy
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000). Sin base de datos o clave de OpenAI, la UI renderiza, pero registro, historial, chat y análisis no estarán disponibles.
+Open [http://localhost:3000/nullbreach](http://localhost:3000/nullbreach).
 
-## Variables de entorno
+The committed `.env.example` documents every application variable. `.env.local` is ignored by Git and must contain local-only values. Vercel sensitive variables cannot be downloaded after creation, so replace local placeholders with your own PostgreSQL and OpenAI credentials.
 
-| Variable              | Uso                                          |
-| --------------------- | -------------------------------------------- |
-| `DATABASE_URL`        | URL PostgreSQL de Supabase para Prisma       |
-| `NEXTAUTH_SECRET`     | Secreto de firma de sesiones NextAuth        |
-| `NEXTAUTH_URL`        | URL pública de la aplicación                 |
-| `OPENAI_API_KEY`      | Clave usada únicamente por rutas de servidor |
-| `OPENAI_MODEL`        | Modelo para Responses API                    |
-| `NEXT_PUBLIC_API_URL` | URL pública opcional para clientes           |
+## Environment variables
 
-No versionar `.env.local` ni secretos. `.env.example` es solo una plantilla sin valores reales.
+| Variable          | Classification | Required | Source                                   |
+| ----------------- | -------------- | -------- | ---------------------------------------- |
+| `DATABASE_URL`    | Secret         | Yes      | Prisma Postgres connection URI           |
+| `NEXTAUTH_SECRET` | Secret         | Yes      | `openssl rand -base64 32`                |
+| `NEXTAUTH_URL`    | Normal         | Yes      | Full `/nullbreach/api/auth` endpoint URL |
+| `OPENAI_API_KEY`  | Secret         | Yes      | OpenAI API key dashboard                 |
+| `OPENAI_MODEL`    | Normal         | Yes      | Supported OpenAI model identifier        |
 
-## Base de datos
+Vercel injects `DATABASE_URL`, `STORAGE_DATABASE_URL`, `STORAGE_PRISMA_DATABASE_URL`, and `STORAGE_POSTGRES_URL` from the connected Prisma Postgres resource. Production uses `prisma-postgres-amber-crystal`; staging uses `nullbreach-stg-postgres`. Application code reads only `DATABASE_URL`; the `STORAGE_*` names remain managed by the integration and must not be copied into client-side variables.
 
-El esquema Prisma define `User`, `ChatHistory` y `CodeAnalysis`, con relaciones por usuario y borrado en cascada. Tras configurar `DATABASE_URL`, aplica migraciones con `npx prisma migrate deploy`. Para cambios de esquema usa `npx prisma migrate dev --name <descripcion>` y nunca modifiques una migración aplicada en un entorno compartido.
+## Database
+
+The Prisma schema defines `User`, `ChatHistory`, and `CodeAnalysis`. Apply committed migrations with:
+
+```bash
+npm run db:migrate:deploy
+```
+
+Create schema changes with `npx prisma migrate dev --name <description>`. Never edit a migration that has already run in a shared environment.
 
 ## API
 
-| Ruta                      | Método        | Sesión   | Descripción                             |
-| ------------------------- | ------------- | -------- | --------------------------------------- |
-| `/api/auth/register`      | `POST`        | No       | Crea un usuario con contraseña hasheada |
-| `/api/auth/[...nextauth]` | `GET`, `POST` | NextAuth | Login, logout y sesión                  |
-| `/api/chat`               | `POST`        | Sí       | Consulta a OpenAI y guarda historial    |
-| `/api/analyze`            | `POST`        | Sí       | Analiza código y persiste resultado     |
-| `/api/history`            | `GET`         | Sí       | Obtiene historial del usuario actual    |
+The API includes registration, NextAuth, authenticated chat, authenticated code analysis, history, and public health checks. Request bodies, response schemas, limits, authentication requirements, and error statuses are documented in [docs/api.md](docs/api.md).
 
-Las rutas privadas verifican la sesión en servidor. Los componentes cliente nunca reciben `OPENAI_API_KEY` ni `DATABASE_URL`.
+Production API base URL: [https://wavival.dev/nullbreach/api](https://wavival.dev/nullbreach/api)
 
-## Calidad y pruebas
+## Quality checks
 
-| Comando                 | Propósito                                   |
-| ----------------------- | ------------------------------------------- |
-| `npm run dev`           | Servidor de desarrollo                      |
-| `npm run lint`          | ESLint                                      |
-| `npm run format:check`  | Verifica Prettier                           |
-| `npm run test`          | Pruebas unitarias Jest                      |
-| `npm run test:coverage` | Jest y cobertura mínima del 70%             |
-| `npm run test:e2e`      | Playwright; usa `E2E_BASE_URL` para staging |
-| `npm run build`         | Build de producción Next.js                 |
+```bash
+npm run verify
+npm run test:e2e
+npm audit --audit-level=high
+```
 
-En los PR hacia `dev`, Playwright levanta la aplicación localmente y ejecuta los E2E sin depender de un entorno remoto. El workflow también puede lanzarse manualmente con `base_url` para validar un despliegue existente. Una omisión de E2E o deploy por falta de entorno nunca es evidencia para una promoción.
+`npm run verify` runs linting, formatting checks, Next.js route type generation, Prisma validation and client generation, TypeScript, Jest coverage, and the production Webpack build. Playwright runs separately because it starts the application or targets a deployed environment.
 
-## Flujo Git y entregas
+## Delivery flow
 
-La única secuencia permitida es:
+The only permitted promotion path is:
 
 ```text
 feature/* | fix/* | chore/*
-           ↓
-          dev
-           ↓
-          stg
-           ↓
-         main
+           -> dev
+           -> stg
+           -> main
 ```
 
-- No se hacen commits o merges directos a `dev`, `stg` ni `main`.
-- Las ramas usan `tipo/descripcion-corta`, con `feature`, `fix` o `chore`.
-- Los commits usan `tipo(scope): descripcion`, por ejemplo `feature(auth): add registration`.
-- Scopes permitidos: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps` y `core`.
-- La entrada a `dev` puede activar auto-merge con squash cuando todos los checks requeridos están en verde.
-- `dev -> stg` y `stg -> main` se abren como PRs de promoción y Valentina los fusiona manualmente.
-- No promociones con checks pendientes, fallidos, cancelados o no disponibles. Un staging no desplegado no habilita `dev -> stg`.
-- Tras un merge exitoso a `dev`, se elimina la rama de trabajo local y remota. Al acabar un flujo solo quedan `dev`, `stg` y `main`.
+- Work PRs target `dev`.
+- `dev -> stg` and `stg -> main` are regular promotion PRs.
+- Commitlint checks all commits in work PRs and the Conventional Commit title in promotion PRs.
+- No branch advances while a required check is pending, failing, cancelled, skipped after failure, or unavailable.
+- A merge into `stg` deploys the Vercel `preview` environment, applies Prisma migrations during the remote build, checks `/nullbreach/api/health`, and runs Playwright.
+- A merge into `main` deploys production, applies migrations during the remote build, checks health, and runs Playwright again.
+- Work branches are deleted locally and remotely after their successful merge into `dev`.
 
-Los hooks se instalan con `npm run prepare`. Validan nombre de rama, Conventional Commits con commitlint, ausencia de em dash y patrones de secretos antes de push. Consulta [CONTRIBUTING.md](CONTRIBUTING.md) y [AGENTS.md](AGENTS.md) para el proceso completo.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) for the complete contribution and automation rules.
 
-## CI/CD y despliegue
+## Security
 
-GitHub Actions ejecuta CI, cobertura, revisión estática, análisis de dependencias y secretos, tests de integración, promoción y despliegue.
+- Passwords are hashed with bcrypt.
+- NextAuth sessions use HTTP-only cookies.
+- Database and OpenAI credentials remain server-side.
+- API input lengths are bounded before paid or persistent operations.
+- CI scans dependencies and Git history for high-severity vulnerabilities and secrets.
+- Security headers deny framing, MIME sniffing, and unnecessary browser permissions.
+- Vulnerabilities must be reported privately without publishing credentials or exploit details.
 
-- Staging: ambiente Preview del proyecto Vercel `nullbreach`.
-- Producción: ambiente Production del mismo proyecto Vercel `nullbreach`.
-- No hay configuración Railway activa en este repositorio.
-- No hay build Docker activo en este repositorio.
+## License
 
-Antes de activar despliegues reales, configura estos GitHub Secrets:
-
-```text
-VERCEL_ORG_ID
-VERCEL_PROJECT_ID
-VERCEL_TOKEN
-VERCEL_AUTOMATION_BYPASS_SECRET
-```
-
-`VERCEL_AUTOMATION_BYPASS_SECRET` debe contener el secreto generado por Protection Bypass for Automation en Vercel. El workflow lo usa únicamente para los health checks y E2E del ambiente Preview.
-
-Configura también las variables de aplicación en ambos ambientes de Vercel. Sin esos secretos, el workflow falla y bloquea la promoción `dev -> stg`.
-
-### URLs de autenticación en Vercel
-
-Configura `NEXTAUTH_URL` con la URL HTTPS canónica de cada entorno, o elimínala
-para que NextAuth use automáticamente `VERCEL_URL`. Mantén
-`NEXTAUTH_URL_INTERNAL` sin definir, salvo que exista una URL interna distinta.
-No guardes estas variables como cadenas vacías: NextAuth intenta interpretarlas
-al importar `SessionProvider`, lo que puede romper el prerenderizado incluso en
-`/_not-found`. La configuración de Next.js elimina valores vacíos antes de cargar
-la aplicación para que se apliquen los valores predeterminados de NextAuth.
-
-## Seguridad
-
-- Las contraseñas se hashean con bcrypt.
-- NextAuth gestiona cookies de sesión que no se exponen al JavaScript cliente.
-- OpenAI y Prisma solo se invocan desde servidor.
-- Hooks y GitHub Actions detectan secretos; no sustituyen la revisión humana.
-- `npm audit` y Gitleaks se ejecutan en CI.
-- Reporta vulnerabilidades de manera privada y no publiques secretos ni detalles de explotación en issues públicos.
-
-## Contribución y licencia
-
-Lee [CONTRIBUTING.md](CONTRIBUTING.md) antes de abrir un cambio. El proyecto se distribuye bajo [MIT License](LICENSE).
+NullBreach is released under the [MIT License](LICENSE).

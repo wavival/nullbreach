@@ -19,7 +19,7 @@ jobs:
         with: { fetch-depth: 0 }
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
       - run: npm ci --ignore-scripts
       - name: Fail if an environment file is tracked
@@ -28,8 +28,8 @@ jobs:
             echo "A .env file is tracked. Only .env.example is permitted."
             exit 1
           fi
-      - name: Dependency audit (critical severity)
-        run: npm audit --audit-level=critical
+      - name: Dependency audit (high severity)
+        run: npm audit --audit-level=high
       - name: Scan Git history for secrets
         uses: gitleaks/gitleaks-action@v2
         env:

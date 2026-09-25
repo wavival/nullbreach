@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { appPath } from "@/lib/paths";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function RegisterPage() {
       return setError("Passwords do not match.");
     setLoading(true);
     setError(null);
-    const response = await fetch("/api/auth/register", {
+    const response = await fetch(appPath("/api/auth/register"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: form.get("email"), password }),
@@ -24,7 +25,7 @@ export default function RegisterPage() {
     const data = await response.json();
     setLoading(false);
     if (!response.ok) setError(data.error ?? "Unable to create account.");
-    else router.push("/login");
+    else router.push(appPath("/login"));
   }
   return (
     <main className="grid min-h-screen place-items-center p-6">
@@ -71,7 +72,7 @@ export default function RegisterPage() {
         </button>
         <p className="text-sm text-slate-400">
           Already registered?{" "}
-          <Link className="text-cyan-400" href="/login">
+          <Link className="text-cyan-400" href={appPath("/login")}>
             Sign in
           </Link>
         </p>
