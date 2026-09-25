@@ -1,8 +1,9 @@
 name: Deploy production
 
 on:
+  workflow_dispatch:
   push:
-    tags: ["v*"]
+    branches: [main]
 
 concurrency:
   group: deploy-production
@@ -18,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
+        with: { node-version: 24 }
       - name: Check production deployment configuration
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -36,14 +37,20 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npm exec --yes vercel@latest pull -- --yes --environment=production --token="$VERCEL_TOKEN"
-          npm exec --yes vercel@latest build -- --prod --token="$VERCEL_TOKEN"
-          url="$(npm exec --yes vercel@latest deploy -- --prebuilt --prod --token="$VERCEL_TOKEN")"
+          url="$(npm exec --yes vercel@59.26.0 -- deploy --yes --prod --token="$VERCEL_TOKEN")"
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - name: Health check
         env:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
-        run: curl --fail --retry 5 --retry-all-errors --retry-delay 10 "$DEPLOYMENT_URL"
+        run: curl --fail --retry 5 --retry-all-errors --retry-delay 10 "$DEPLOYMENT_URL/nullbreach/api/health"
+      - name: Install E2E dependencies
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+      - name: Run E2E tests against production
+        run: npm run test:e2e
+        env:
+          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
       - name: Deployment failure guidance
         if: failure()
         run: echo "Health check failed. Configure VERCEL_PREVIOUS_PRODUCTION_DEPLOYMENT_URL and perform a Vercel rollback from that verified deployment."

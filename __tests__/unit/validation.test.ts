@@ -1,4 +1,5 @@
 import {
+  hasValidLength,
   isNonEmptyString,
   isValidEmail,
   normalizeEmail,
@@ -19,5 +20,10 @@ describe("validation helpers", () => {
     expect(isNonEmptyString(" message ")).toBe(true);
     expect(isNonEmptyString("   ")).toBe(false);
     expect(isNonEmptyString({})).toBe(false);
+  });
+
+  it("enforces maximum input lengths after trimming", () => {
+    expect(hasValidLength(" 1234 ", 4)).toBe(true);
+    expect(hasValidLength("12345", 4)).toBe(false);
   });
 });

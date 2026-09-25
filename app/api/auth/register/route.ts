@@ -7,10 +7,11 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const email = normalizeEmail(body?.email);
   const password = typeof body?.password === "string" ? body.password : "";
-  if (!isValidEmail(email) || password.length < 8) {
+  if (!isValidEmail(email) || password.length < 8 || password.length > 128) {
     return NextResponse.json(
       {
-        error: "Provide a valid email and a password of at least 8 characters.",
+        error:
+          "Provide a valid email and a password between 8 and 128 characters.",
       },
       { status: 400 },
     );

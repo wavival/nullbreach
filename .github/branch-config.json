@@ -1,6 +1,6 @@
 {
   "dev": {
-    "description": "Integration branch. Pull requests must come from feat/*, fix/*, chore/*, docs/*, refactor/*, test/*, ci/* or security/*.",
+    "description": "Integration branch. Pull requests must come from feature/*, fix/* or chore/*.",
     "directPush": false
   },
   "stg": {
