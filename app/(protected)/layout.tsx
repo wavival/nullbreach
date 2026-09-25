@@ -12,34 +12,33 @@ export default async function ProtectedLayout({
   const session = await getCurrentSession();
   if (!session?.user?.id) redirect(appPath("/login"));
   return (
-    <>
-      <header className="border-b border-slate-800 bg-slate-950">
-        <nav className="mx-auto flex max-w-6xl items-center gap-5 p-4">
-          <Link
-            className="font-bold text-cyan-400"
-            href={appPath("/dashboard")}
-          >
-            NULLBREACH
+    <div className="app-shell">
+      <header className="border-b border-border bg-surface">
+        <nav className="mx-auto flex max-w-6xl items-center gap-5 p-4 font-mono">
+          <Link className="font-bold text-primary" href={appPath("/dashboard")}>
+            <span className="text-primary">[</span>nullbreach
+            <span className="text-primary">]</span>
           </Link>
           <Link
-            className="text-sm text-slate-300 hover:text-white"
+            className="terminal-link text-body-sm"
+            aria-current="page"
             href={appPath("/dashboard")}
           >
-            Chat
+            ~/chat
           </Link>
           <Link
-            className="text-sm text-slate-300 hover:text-white"
+            className="terminal-link text-body-sm"
             href={appPath("/analyze")}
           >
-            Analyze
+            ~/analyze
           </Link>
-          <span className="ml-auto hidden text-sm text-slate-400 sm:block">
+          <span className="ml-auto hidden text-body-sm text-foreground-muted sm:block">
             {session.user.email}
           </span>
           <LogoutButton />
         </nav>
       </header>
-      <main className="mx-auto max-w-6xl p-6">{children}</main>
-    </>
+      <main className="mx-auto max-w-6xl p-6 terminal-enter">{children}</main>
+    </div>
   );
 }
