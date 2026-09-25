@@ -45,7 +45,10 @@ jobs:
         env:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-        run: curl --fail --retry 5 --retry-all-errors --retry-delay 10 --header "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" "$DEPLOYMENT_URL/nullbreach/api/health"
+        run: |
+          curl --fail --retry 5 --retry-all-errors --retry-delay 10 \
+            --header "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+            "$DEPLOYMENT_URL/nullbreach/api/health"
       - name: Install E2E dependencies
         run: |
           npm ci --ignore-scripts
