@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { appPath } from "@/lib/paths";
 
 type Lang = "es" | "en";
@@ -157,9 +158,9 @@ function Icon({
 function WindowBar({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-xs border-b border-border bg-surface-alt/60 px-md py-sm">
-      <i className="dot bg-severity-critical/80" />
-      <i className="dot bg-severity-high/80" />
-      <i className="dot bg-severity-low/80" />
+      <i aria-hidden="true" className="dot bg-severity-critical/80" />
+      <i aria-hidden="true" className="dot bg-severity-high/80" />
+      <i aria-hidden="true" className="dot bg-severity-low/80" />
       <span className="ml-sm font-mono text-body-sm text-foreground-muted">
         {label}
       </span>
@@ -201,7 +202,7 @@ export function Landing({ lang }: { lang: Lang }) {
   const t = copy[lang];
   const login = appPath("/login");
   return (
-    <div className="landing">
+    <div lang={lang} className="landing">
       <header className="fixed inset-x-0 top-0 z-50 w-full border-b border-border bg-surface/85 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-[1100px] items-center justify-between gap-md px-md md:h-navbar md:px-lg">
           <Link
@@ -214,7 +215,12 @@ export function Landing({ lang }: { lang: Lang }) {
               <b className="text-primary">]</b>
             </span>
           </Link>
-          <nav className="hidden items-center gap-lg font-mono text-body text-foreground-muted md:flex">
+          <nav
+            aria-label={
+              lang === "es" ? "Navegación principal" : "Main navigation"
+            }
+            className="hidden items-center gap-lg font-mono text-body text-foreground-muted md:flex"
+          >
             <a href={`#${t.features}`}>~/{t.features}</a>
             <a href={`#${t.how}`}>~/{t.how}</a>
             <a
@@ -232,12 +238,17 @@ export function Landing({ lang }: { lang: Lang }) {
             <Link
               className="primary-btn hidden h-9 px-lg text-body md:inline-flex"
               href={login}
+              target="_blank"
+              rel="noreferrer"
             >
               {t.signIn}
               <Icon name="arrow-right" className="size-4" />
             </Link>
             <details className="nav-menu relative md:hidden">
-              <summary className="flex size-9 cursor-pointer list-none items-center justify-center rounded border border-border text-foreground-muted">
+              <summary
+                aria-label={lang === "es" ? "Abrir menú" : "Open menu"}
+                className="flex size-9 cursor-pointer list-none items-center justify-center rounded border border-border text-foreground-muted"
+              >
                 <Icon name="menu" className="size-5" />
               </summary>
               <div className="absolute right-0 top-[calc(100%+8px)] z-50 flex w-60 flex-col gap-xs rounded border border-border bg-surface p-sm font-mono text-body shadow-large">
@@ -257,7 +268,12 @@ export function Landing({ lang }: { lang: Lang }) {
                   </span>
                   <LangToggle lang={lang} />
                 </div>
-                <Link href={login} className="primary-btn justify-center">
+                <Link
+                  href={login}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="primary-btn justify-center"
+                >
                   {t.signIn}
                   <Icon name="arrow-right" className="size-4" />
                 </Link>
@@ -297,6 +313,8 @@ export function Landing({ lang }: { lang: Lang }) {
                   <div className="mt-xs flex flex-wrap items-center gap-md">
                     <Link
                       href={login}
+                      target="_blank"
+                      rel="noreferrer"
                       className="primary-btn h-12 px-xl text-body"
                     >
                       {t.signIn}
@@ -315,7 +333,10 @@ export function Landing({ lang }: { lang: Lang }) {
                   <div className="flex items-center justify-between text-foreground-muted">
                     <span className="text-primary">findings.log</span>
                     <span>
-                      <i className="mr-xs inline-block size-1.5 animate-pulse rounded-full bg-primary" />
+                      <i
+                        aria-hidden="true"
+                        className="mr-xs inline-block size-1.5 animate-pulse rounded-full bg-primary"
+                      />
                       live
                     </span>
                   </div>
@@ -537,6 +558,8 @@ export function Landing({ lang }: { lang: Lang }) {
               </p>
               <Link
                 href={login}
+                target="_blank"
+                rel="noreferrer"
                 className="primary-btn relative mt-sm h-12 px-xl text-body"
               >
                 {t.signIn}
@@ -548,12 +571,11 @@ export function Landing({ lang }: { lang: Lang }) {
         <section className="mx-auto max-w-[1100px] px-md pb-3xl md:px-lg lg:pb-4xl">
           <div className="mx-auto flex w-fit flex-col items-center gap-lg rounded-lg border border-border bg-surface-alt/40 p-lg sm:flex-row sm:gap-xl sm:p-xl">
             <div className="group relative size-32 shrink-0 overflow-hidden rounded-lg border border-border">
-              <img
-                src="/nullbreach/profile.webp"
+              <Image
+                src={appPath("/profile.webp")}
                 width="128"
                 height="128"
-                loading="lazy"
-                decoding="async"
+                sizes="128px"
                 alt="Valentina Ramírez"
                 className="size-full object-cover transition-transform duration-200 group-hover:scale-105"
               />
@@ -618,15 +640,25 @@ export function Landing({ lang }: { lang: Lang }) {
                 {t.tagline}.
               </p>
             </div>
-            <nav className="flex flex-col gap-sm font-mono">
+            <nav
+              aria-label={
+                lang === "es" ? "Enlaces del producto" : "Product links"
+              }
+              className="flex flex-col gap-sm font-mono"
+            >
               <h4 className="text-label uppercase text-foreground-muted">
                 {t.product}
               </h4>
               <a href={`#${t.features}`}>~/{t.features}</a>
               <a href={`#${t.how}`}>~/{t.how}</a>
-              <Link href={login}>~/login</Link>
+              <Link href={login} target="_blank" rel="noreferrer">
+                ~/login
+              </Link>
             </nav>
-            <nav className="flex flex-col gap-sm font-mono">
+            <nav
+              aria-label={lang === "es" ? "Recursos" : "Resources"}
+              className="flex flex-col gap-sm font-mono"
+            >
               <h4 className="text-label uppercase text-foreground-muted">
                 {t.resources}
               </h4>

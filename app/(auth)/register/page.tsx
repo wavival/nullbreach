@@ -34,7 +34,10 @@ export default function RegisterPage() {
     await signIn("google", { callbackUrl: appPath("/dashboard") });
   }
   return (
-    <main className="landing grid min-h-screen place-items-center p-6">
+    <main
+      id="main"
+      className="landing grid min-h-screen place-items-center p-6"
+    >
       <form
         onSubmit={submit}
         className="w-full max-w-md space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
@@ -43,9 +46,10 @@ export default function RegisterPage() {
           root@nullbreach:~$ auth register
         </p>
         <h1 className="font-mono text-h2">Create account</h1>
-        <label className="block text-sm">
+        <label className="block text-sm" htmlFor="register-email">
           Email
           <input
+            id="register-email"
             required
             name="email"
             type="email"
@@ -64,7 +68,11 @@ export default function RegisterPage() {
           label="Confirm password"
           minLength={8}
         />
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-400" role="alert">
+            {error}
+          </p>
+        )}
         <button
           disabled={loading}
           className="primary-btn w-full justify-center p-2 disabled:opacity-50"
@@ -74,7 +82,7 @@ export default function RegisterPage() {
         <button
           type="button"
           onClick={googleRegister}
-          className="w-full rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+          className="flex w-full items-center justify-center gap-sm rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary"
         >
           <GoogleMark /> Continue with Google
         </button>

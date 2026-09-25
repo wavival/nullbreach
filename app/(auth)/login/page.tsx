@@ -30,7 +30,10 @@ export default function LoginPage() {
     await signIn("google", { callbackUrl: appPath("/dashboard") });
   }
   return (
-    <main className="landing grid min-h-screen place-items-center p-6">
+    <main
+      id="main"
+      className="landing grid min-h-screen place-items-center p-6"
+    >
       <form
         onSubmit={submit}
         className="w-full max-w-md space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
@@ -39,9 +42,10 @@ export default function LoginPage() {
           root@nullbreach:~$ auth login
         </p>
         <h1 className="font-mono text-h2">Welcome back</h1>
-        <label className="block text-sm">
+        <label className="block text-sm" htmlFor="login-email">
           Email
           <input
+            id="login-email"
             required
             name="email"
             type="email"
@@ -60,7 +64,11 @@ export default function LoginPage() {
         >
           Forgot your password?
         </Link>
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-400" role="alert">
+            {error}
+          </p>
+        )}
         <button
           disabled={loading}
           className="primary-btn w-full justify-center p-2 disabled:opacity-50"
@@ -70,7 +78,7 @@ export default function LoginPage() {
         <button
           type="button"
           onClick={googleLogin}
-          className="w-full rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+          className="flex w-full items-center justify-center gap-sm rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary"
         >
           <GoogleMark /> Continue with Google
         </button>

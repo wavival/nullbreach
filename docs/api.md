@@ -84,6 +84,40 @@ Errors:
 
 NextAuth handler for credentials sign-in, sign-out, session, CSRF, and provider operations. The browser should use the NextAuth client rather than constructing these requests manually.
 
+Supported sign-in methods:
+
+- Credentials, using an email and password created through registration.
+- Google OAuth, when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are configured. Google users are linked by normalized email.
+
+## Password recovery
+
+### `POST /nullbreach/api/auth/forgot-password`
+
+Requests a password-reset email. The response intentionally does not reveal whether the email exists.
+
+Request:
+
+```json
+{ "email": "user@example.com" }
+```
+
+The server stores only a SHA-256 hash of the one-hour token and sends the reset URL through Brevo when `BREVO_API_KEY` and `BREVO_SENDER_EMAIL` are configured. In non-production local development, the URL is logged when email delivery is not configured.
+
+### `POST /nullbreach/api/auth/reset-password`
+
+Consumes a valid, unexpired, single-use token and replaces the bcrypt password hash.
+
+Request:
+
+```json
+{ "token": "reset-token", "password": "minimum-eight-characters" }
+```
+
+Errors:
+
+- `400`: invalid token or password length.
+- `200`: password updated successfully.
+
 ## Chat
 
 ### `POST /nullbreach/api/chat`

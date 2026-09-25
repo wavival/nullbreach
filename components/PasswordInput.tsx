@@ -12,9 +12,14 @@ export default function PasswordInput({
   const [visible, setVisible] = useState(false);
   return (
     <span className="relative block">
-      {label && <span className="block text-sm">{label}</span>}
+      {label && (
+        <label className="block text-sm" htmlFor={props.id ?? props.name}>
+          {label}
+        </label>
+      )}
       <input
         {...props}
+        id={props.id ?? props.name}
         type={visible ? "text" : "password"}
         className={`${label ? "mt-1 " : ""}w-full rounded border border-border bg-surface-alt p-2 pr-16 text-foreground outline-none focus:border-primary ${className}`}
       />

@@ -42,7 +42,11 @@ export default function CodeAnalyzer() {
         Paste a snippet for an AI-assisted security review.
       </p>
       <form onSubmit={submit} className="mt-5 space-y-3">
+        <label className="block text-sm font-medium" htmlFor="source-code">
+          Source code
+        </label>
         <textarea
+          id="source-code"
           value={code}
           onChange={(event) => setCode(event.target.value)}
           rows={16}
@@ -56,7 +60,10 @@ export default function CodeAnalyzer() {
           </p>
         )}
         {result && (
-          <article className="whitespace-pre-wrap rounded border border-primary/30 bg-surface-alt p-4">
+          <article
+            aria-live="polite"
+            className="whitespace-pre-wrap rounded border border-primary/30 bg-surface-alt p-4"
+          >
             {result}
           </article>
         )}

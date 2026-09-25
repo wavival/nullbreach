@@ -33,31 +33,33 @@ export async function consumePasswordResetToken(token: string) {
 
 export const resetUrl = (token: string) => {
   const base = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const origin = new URL(base).origin;
   return new URL(
     `${appPath("/reset-password")}?token=${encodeURIComponent(token)}`,
-    base,
+    origin,
   ).toString();
 };
 
 export async function sendPasswordResetEmail(email: string, url: string) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.PASSWORD_RESET_FROM;
-  if (!apiKey || !from) {
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL;
+  const senderName = process.env.BREVO_SENDER_NAME || "NullBreach";
+  if (!apiKey || !senderEmail) {
     if (process.env.NODE_ENV !== "production")
       console.info(`Password reset URL for ${email}: ${url}`);
     return;
   }
-  const response = await fetch("https://api.resend.com/emails", {
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      "api-key": apiKey,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from,
-      to: [email],
+      sender: { email: senderEmail, name: senderName },
+      to: [{ email }],
       subject: "Reset your NullBreach password",
-      text: `Use this link within one hour to reset your password: ${url}`,
+      textContent: `Use this link within one hour to reset your password: ${url}`,
     }),
   });
   if (!response.ok) throw new Error("Password reset email could not be sent.");

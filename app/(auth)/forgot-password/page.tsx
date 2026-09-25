@@ -21,7 +21,10 @@ export default function ForgotPasswordPage() {
     setLoading(false);
   }
   return (
-    <main className="landing grid min-h-screen place-items-center p-6">
+    <main
+      id="main"
+      className="landing grid min-h-screen place-items-center p-6"
+    >
       <form
         onSubmit={submit}
         className="w-full max-w-md space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
@@ -33,14 +36,18 @@ export default function ForgotPasswordPage() {
         <p className="text-body text-foreground-muted">
           Enter your email and we will send a reset link if the account exists.
         </p>
-        <input
-          required
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          className="w-full rounded border border-border bg-surface-alt p-2 text-foreground outline-none focus:border-primary"
-          placeholder="you@example.com"
-        />
+        <label className="block text-sm" htmlFor="forgot-email">
+          Email
+          <input
+            id="forgot-email"
+            required
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            className="mt-1 w-full rounded border border-border bg-surface-alt p-2 text-foreground outline-none focus:border-primary"
+            placeholder="you@example.com"
+          />
+        </label>
         {message && (
           <p className="text-body-sm text-foreground-muted" role="status">
             {message}

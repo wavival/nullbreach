@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,6 +12,29 @@ body {
   font-family: Inter, system-ui, sans-serif;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
   background-attachment: fixed;
+}
+
+:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 4px;
+  background: #38bdf8;
+  color: #0b1220;
+  padding: 0.5rem 0.75rem;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.875rem;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -150,6 +171,38 @@ body {
 }
 .terminal-enter {
   animation: terminal-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.route-transition {
+  animation: route-transition 180ms ease-out both;
+}
+
+@keyframes route-transition {
+  from {
+    opacity: 0.86;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading-dots {
+  display: inline-block;
+  width: 1.5em;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: loading-dots 900ms steps(4, end) infinite;
+}
+
+@keyframes loading-dots {
+  from {
+    width: 0;
+  }
+  to {
+    width: 1.5em;
+  }
 }
 @keyframes terminal-enter {
   from {
