@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { appPath } from "@/lib/paths";
+import PasswordInput from "@/components/PasswordInput";
+import GoogleMark from "@/components/GoogleMark";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,42 +26,65 @@ export default function LoginPage() {
     if (result?.error) setError("Invalid email or password.");
     else router.push(appPath("/dashboard"));
   }
+  async function googleLogin() {
+    await signIn("google", { callbackUrl: appPath("/dashboard") });
+  }
   return (
-    <main className="grid min-h-screen place-items-center p-6">
+    <main
+      id="main"
+      className="landing grid min-h-screen place-items-center p-6"
+    >
       <form
         onSubmit={submit}
-        className="w-full max-w-md space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-6"
+        className="w-full max-w-md space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
       >
-        <h1 className="text-2xl font-bold">Welcome back</h1>
-        <label className="block text-sm">
+        <p className="font-mono text-body-sm text-primary">
+          root@nullbreach:~$ auth login
+        </p>
+        <h1 className="font-mono text-h2">Welcome back</h1>
+        <label className="block text-sm" htmlFor="login-email">
           Email
           <input
+            id="login-email"
             required
             name="email"
             type="email"
-            className="mt-1 w-full rounded border border-slate-600 bg-slate-950 p-2"
+            className="mt-1 w-full rounded border border-border bg-surface-alt p-2 text-foreground outline-none focus:border-primary"
           />
         </label>
-        <label className="block text-sm">
-          Password
-          <input
-            required
-            name="password"
-            type="password"
-            minLength={8}
-            className="mt-1 w-full rounded border border-slate-600 bg-slate-950 p-2"
-          />
-        </label>
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        <PasswordInput
+          required
+          name="password"
+          label="Password"
+          minLength={8}
+        />
+        <Link
+          className="block text-right text-body-sm text-primary"
+          href={appPath("/forgot-password")}
+        >
+          Forgot your password?
+        </Link>
+        {error && (
+          <p className="text-sm text-red-400" role="alert">
+            {error}
+          </p>
+        )}
         <button
           disabled={loading}
-          className="w-full rounded bg-cyan-500 p-2 font-semibold text-slate-950 disabled:opacity-50"
+          className="primary-btn w-full justify-center p-2 disabled:opacity-50"
         >
           {loading ? "Signing in…" : "Sign in"}
         </button>
-        <p className="text-sm text-slate-400">
+        <button
+          type="button"
+          onClick={googleLogin}
+          className="flex w-full items-center justify-center gap-sm rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <GoogleMark /> Continue with Google
+        </button>
+        <p className="text-body-sm text-foreground-muted">
           New here?{" "}
-          <Link className="text-cyan-400" href={appPath("/register")}>
+          <Link className="text-primary" href={appPath("/register")}>
             Create an account
           </Link>
         </p>

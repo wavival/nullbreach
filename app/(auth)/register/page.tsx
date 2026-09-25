@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { appPath } from "@/lib/paths";
+import { signIn } from "next-auth/react";
+import PasswordInput from "@/components/PasswordInput";
+import GoogleMark from "@/components/GoogleMark";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -27,52 +30,65 @@ export default function RegisterPage() {
     if (!response.ok) setError(data.error ?? "Unable to create account.");
     else router.push(appPath("/login"));
   }
+  async function googleRegister() {
+    await signIn("google", { callbackUrl: appPath("/dashboard") });
+  }
   return (
-    <main className="grid min-h-screen place-items-center p-6">
+    <main
+      id="main"
+      className="landing grid min-h-screen place-items-center p-6"
+    >
       <form
         onSubmit={submit}
-        className="w-full max-w-md space-y-4 rounded-xl border border-slate-700 bg-slate-900 p-6"
+        className="w-full max-w-md space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
       >
-        <h1 className="text-2xl font-bold">Create account</h1>
-        <label className="block text-sm">
+        <p className="font-mono text-body-sm text-primary">
+          root@nullbreach:~$ auth register
+        </p>
+        <h1 className="font-mono text-h2">Create account</h1>
+        <label className="block text-sm" htmlFor="register-email">
           Email
           <input
+            id="register-email"
             required
             name="email"
             type="email"
-            className="mt-1 w-full rounded border border-slate-600 bg-slate-950 p-2"
+            className="mt-1 w-full rounded border border-border bg-surface-alt p-2 text-foreground outline-none focus:border-primary"
           />
         </label>
-        <label className="block text-sm">
-          Password
-          <input
-            required
-            name="password"
-            type="password"
-            minLength={8}
-            className="mt-1 w-full rounded border border-slate-600 bg-slate-950 p-2"
-          />
-        </label>
-        <label className="block text-sm">
-          Confirm password
-          <input
-            required
-            name="confirmPassword"
-            type="password"
-            minLength={8}
-            className="mt-1 w-full rounded border border-slate-600 bg-slate-950 p-2"
-          />
-        </label>
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        <PasswordInput
+          required
+          name="password"
+          label="Password"
+          minLength={8}
+        />
+        <PasswordInput
+          required
+          name="confirmPassword"
+          label="Confirm password"
+          minLength={8}
+        />
+        {error && (
+          <p className="text-sm text-red-400" role="alert">
+            {error}
+          </p>
+        )}
         <button
           disabled={loading}
-          className="w-full rounded bg-cyan-500 p-2 font-semibold text-slate-950 disabled:opacity-50"
+          className="primary-btn w-full justify-center p-2 disabled:opacity-50"
         >
           {loading ? "Creating…" : "Create account"}
         </button>
-        <p className="text-sm text-slate-400">
+        <button
+          type="button"
+          onClick={googleRegister}
+          className="flex w-full items-center justify-center gap-sm rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <GoogleMark /> Continue with Google
+        </button>
+        <p className="text-body-sm text-foreground-muted">
           Already registered?{" "}
-          <Link className="text-cyan-400" href={appPath("/login")}>
+          <Link className="text-primary" href={appPath("/login")}>
             Sign in
           </Link>
         </p>
