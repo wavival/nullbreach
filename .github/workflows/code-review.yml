@@ -15,7 +15,7 @@ jobs:
   static-review:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Review exposed environment files and hard-coded secrets
         id: review
         run: |
