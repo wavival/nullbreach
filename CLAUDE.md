@@ -2,12 +2,14 @@
 
 ## Product and architecture
 
-NullBreach is a single Next.js App Router application. The repository root contains the only deployable application.
+NullBreach is a single Next.js App Router application organized into three internal product areas: `features/landing/` for the public landing, `app/` and `components/` for the frontend, and `app/api/`, `lib/`, and `prisma/` for the backend boundary. The repository root contains the only deployable application.
 
 - UI and routes: `app/` and `components/`.
-- Authentication: NextAuth Credentials with JWT sessions in HTTP-only cookies.
+- Public landing: `features/landing/`, including its bilingual SEO-facing content.
+- Authentication: NextAuth Credentials and optional Google OAuth with JWT sessions in HTTP-only cookies.
 - Data: Prisma ORM with separate Vercel Marketplace Prisma Postgres resources for production (`prisma-postgres-amber-crystal`) and staging (`nullbreach-stg-postgres`), with the schema in `prisma/schema.prisma`.
 - AI: the OpenAI SDK is used only by server-side modules and route handlers.
+- Email: Brevo is used server-side for password-reset messages when its production variables are configured.
 - Tests: Jest in `__tests__/unit` and Playwright in `__tests__/e2e`.
 - API contract: `docs/api.md`.
 - Design decisions: `DESIGN.md`.
@@ -57,6 +59,8 @@ Only two deployable environments are used:
 Automatic Git deployments are disabled in `vercel.json`. GitHub Actions performs all builds, migrations, deployments, health checks, and deployed E2E tests. Do not deploy `dev`, feature branches, Dependabot branches, or previews from branches other than `stg`.
 
 The Vercel project is a child microfrontend of `wavival-dev`. Its public base path is `/nullbreach`; keep `microfrontends.json`, `lib/paths.ts`, Next.js rewrites, NextAuth `basePath`, browser links, and API requests synchronized. The default application repository owns the production routing source of truth.
+
+Public indexing is limited to the Spanish and English landing routes. `app/sitemap.ts` lists those URLs and `app/robots.ts` excludes API, authentication, and protected workspace paths. Do not add authenticated routes to the sitemap.
 
 ## Secrets and data
 

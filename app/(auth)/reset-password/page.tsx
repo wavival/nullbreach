@@ -29,7 +29,10 @@ export default function ResetPasswordPage() {
     setLoading(false);
   }
   return (
-    <main className="landing grid min-h-screen place-items-center p-6">
+    <main
+      id="main"
+      className="landing grid min-h-screen place-items-center p-6"
+    >
       <form
         onSubmit={submit}
         className="w-full max-w-md space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
@@ -40,6 +43,8 @@ export default function ResetPasswordPage() {
         <h1 className="font-mono text-h2">Choose a new password</h1>
         <PasswordInput
           required
+          name="password"
+          label="New password"
           minLength={8}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
@@ -47,6 +52,8 @@ export default function ResetPasswordPage() {
         />
         <PasswordInput
           required
+          name="confirmPassword"
+          label="Confirm password"
           minLength={8}
           value={confirm}
           onChange={(event) => setConfirm(event.target.value)}

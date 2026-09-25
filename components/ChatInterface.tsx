@@ -77,7 +77,10 @@ export default function ChatInterface({
           </p>
         )}
         {answer && (
-          <article className="whitespace-pre-wrap rounded border border-primary/30 bg-surface-alt p-4 text-foreground">
+          <article
+            aria-live="polite"
+            className="whitespace-pre-wrap rounded border border-primary/30 bg-surface-alt p-4 text-foreground"
+          >
             {answer}
           </article>
         )}
