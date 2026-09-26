@@ -45,7 +45,7 @@ fix(api): reject oversized chat questions
 chore(docs): document the health endpoint
 ```
 
-Allowed types are `feature`, `fix`, and `chore`.
+Allowed types are `feat`, `fix`, and `chore`.
 
 Allowed scopes are `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, and `core`.
 

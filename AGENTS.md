@@ -39,7 +39,7 @@ Use Conventional Commits in English:
 type(scope): message
 ```
 
-Allowed types: `feature`, `fix`, `chore`.
+Allowed types: `feat`, `fix`, `chore`.
 
 Allowed scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`.
 
