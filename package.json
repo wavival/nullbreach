@@ -27,7 +27,7 @@
     "test:e2e": "npm run db:generate && playwright test",
     "db:validate": "DATABASE_URL=${DATABASE_URL:-postgresql://validation:validation@localhost:5432/nullbreach} prisma validate",
     "db:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://validation:validation@localhost:5432/nullbreach} prisma generate",
-    "db:migrate:deploy": "prisma migrate deploy",
+    "db:migrate:deploy": "if [ -f \"$PWD/.env.local\" ]; then set -a; . \"$PWD/.env.local\"; set +a; fi; prisma migrate deploy",
     "verify": "npm run lint && npm run format:check && npm run typegen && npm run db:validate && npm run db:generate && npm run typecheck && npm run test:coverage && npm run build",
     "prepare": "bash scripts/install-git-hooks.sh"
   },

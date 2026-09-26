@@ -33,18 +33,25 @@ export default function CodeAnalyzer() {
     }
   }
   return (
-    <section className="mx-auto max-w-4xl rounded-xl border border-slate-700 bg-slate-900 p-5 shadow-xl">
-      <h1 className="text-xl font-semibold">OWASP code analyzer</h1>
-      <p className="mt-1 text-sm text-slate-400">
+    <section className="terminal-panel mx-auto max-w-4xl rounded-lg border border-border bg-surface/80 p-5 shadow-large">
+      <p className="font-mono text-body-sm text-primary">
+        $ nullbreach scan ./src
+      </p>
+      <h1 className="mt-2 font-mono text-h3">OWASP code analyzer</h1>
+      <p className="mt-1 text-body text-foreground-muted">
         Paste a snippet for an AI-assisted security review.
       </p>
       <form onSubmit={submit} className="mt-5 space-y-3">
+        <label className="block text-sm font-medium" htmlFor="source-code">
+          Source code
+        </label>
         <textarea
+          id="source-code"
           value={code}
           onChange={(event) => setCode(event.target.value)}
           rows={16}
           spellCheck={false}
-          className="w-full rounded-lg border border-slate-600 bg-slate-950 p-3 font-mono text-sm outline-none focus:border-cyan-400"
+          className="w-full rounded border border-border bg-surface-alt p-3 font-mono text-sm outline-none focus:border-primary"
           placeholder="// Paste code here"
         />
         {error && (
@@ -53,13 +60,16 @@ export default function CodeAnalyzer() {
           </p>
         )}
         {result && (
-          <article className="whitespace-pre-wrap rounded-lg border border-cyan-900 bg-slate-950 p-4">
+          <article
+            aria-live="polite"
+            className="whitespace-pre-wrap rounded border border-primary/30 bg-surface-alt p-4"
+          >
             {result}
           </article>
         )}
         <button
           disabled={loading}
-          className="rounded-lg bg-cyan-500 px-4 py-2 font-semibold text-slate-950 disabled:opacity-50"
+          className="primary-btn px-4 py-2 disabled:opacity-50"
         >
           {loading ? "Analyzing…" : "Analyze code"}
         </button>

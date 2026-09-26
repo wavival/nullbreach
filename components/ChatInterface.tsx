@@ -53,9 +53,10 @@ export default function ChatInterface({
   }
 
   return (
-    <section className="rounded-xl border border-slate-700 bg-slate-900 p-5 shadow-xl">
-      <h1 className="text-xl font-semibold">Security chat</h1>
-      <p className="mt-1 text-sm text-slate-400">
+    <section className="terminal-panel rounded-lg border border-border bg-surface/80 p-5 shadow-large">
+      <p className="font-mono text-body-sm text-primary">$ nullbreach chat</p>
+      <h1 className="mt-2 font-mono text-h3">Security chat</h1>
+      <p className="mt-1 text-body text-foreground-muted">
         Ask about vulnerabilities, security controls, or secure coding.
       </p>
       <form onSubmit={submit} className="mt-5 space-y-3">
@@ -67,7 +68,7 @@ export default function ChatInterface({
           value={question}
           onChange={(event) => setQuestion(event.target.value)}
           rows={6}
-          className="w-full rounded-lg border border-slate-600 bg-slate-950 p-3 outline-none focus:border-cyan-400"
+          className="w-full rounded border border-border bg-surface-alt p-3 outline-none focus:border-primary"
           placeholder="How should I prevent SQL injection?"
         />
         {error && (
@@ -76,13 +77,16 @@ export default function ChatInterface({
           </p>
         )}
         {answer && (
-          <article className="whitespace-pre-wrap rounded-lg border border-cyan-900 bg-slate-950 p-4 text-slate-200">
+          <article
+            aria-live="polite"
+            className="whitespace-pre-wrap rounded border border-primary/30 bg-surface-alt p-4 text-foreground"
+          >
             {answer}
           </article>
         )}
         <button
           disabled={loading}
-          className="rounded-lg bg-cyan-500 px-4 py-2 font-semibold text-slate-950 disabled:opacity-50"
+          className="primary-btn px-4 py-2 disabled:opacity-50"
         >
           {loading ? "Thinking…" : "Ask NullBreach"}
         </button>

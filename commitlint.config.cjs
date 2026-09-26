@@ -26,7 +26,7 @@ module.exports = {
     },
   ],
   helpUrl:
-    "Use: type(scope): message. Types: feature, fix, chore. Scopes: api, ui, db, auth, ci, deploy, docs, config, tests, security, deps, core.",
+    "Use: type(scope): message. Types: feat, fix, chore. Scopes: api, ui, db, auth, ci, deploy, docs, config, tests, security, deps, core.",
   defaultIgnores: true,
   ignores: [(message) => message.startsWith("Merge pull request")],
   rules: {
@@ -39,6 +39,6 @@ module.exports = {
     "scope-empty": [2, "never"],
     "subject-case": [0],
     "subject-empty": [2, "never"],
-    "type-enum": [2, "always", ["feature", "fix", "chore"]],
+    "type-enum": [2, "always", ["feat", "fix", "chore"]],
   },
 };

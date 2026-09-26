@@ -10,11 +10,24 @@ The browser communicates only with the Next.js application. Route handlers call 
 
 ```text
 Browser
-  -> Next.js pages and route handlers
+  -> Public landing (`features/landing/`)
+  -> Next.js frontend (`app/`, `components/`)
+  -> Next.js backend (`app/api/`, `lib/`, `prisma/`)
      -> NextAuth session validation
      -> Prisma ORM -> Prisma Postgres
      -> OpenAI Responses API
+     -> Brevo SMTP API for password resets
 ```
+
+## Product boundaries
+
+The repository is intentionally monorepo-ready but deploys as one Next.js application:
+
+- Landing: public, bilingual, indexable, lightweight, and independent from authenticated state.
+- Frontend: authentication screens and the protected chat and analysis workspace.
+- Backend: route handlers, authentication callbacks, validation, provider clients, persistence, and migrations.
+
+The boundaries are folders and runtime responsibilities, not separate packages. A future extraction into workspace packages must preserve the `/nullbreach` public base path and the same environment separation.
 
 ## Runtime boundaries
 
@@ -26,12 +39,17 @@ Browser
 - `lib/openai.ts` is the only OpenAI client boundary.
 - `lib/prisma.ts` owns the shared Prisma client lifecycle.
 - Vercel Web Analytics is mounted once in the root layout.
+- Public metadata, sitemap, robots rules, and localized alternates are defined at the route layer. Authentication and protected layouts are explicitly `noindex`.
+- The landing uses semantic landmarks, one primary heading, associated labels, keyboard focus styles, a skip link, optimized local imagery, and reduced-motion behavior.
+- `app/template.tsx` provides a short navigation transition and `app/loading.tsx` provides the pending state without adding a client-side routing library. Both are disabled effectively for users who request reduced motion.
 
 Production uses the Vercel Marketplace Prisma Postgres resource `prisma-postgres-amber-crystal`; staging uses the independent `nullbreach-stg-postgres` resource. The application consumes the active environment's server-side `DATABASE_URL`. Integration-managed `STORAGE_*` variables are deployment metadata and are not application API contracts.
 
 ## Data model
 
 - `User` stores a unique normalized email and a bcrypt password hash.
+- Google accounts use an empty password hash and are linked by normalized email in the NextAuth sign-in callback.
+- `PasswordResetToken` stores only a SHA-256 token hash, expiration, consumption timestamp, and owning user.
 - `ChatHistory` stores each question, generated response, model identifier, and timestamp.
 - `CodeAnalysis` stores submitted code, generated vulnerability guidance, and timestamp.
 - User deletion cascades to chat and analysis records.
@@ -50,6 +68,7 @@ The complete contract is in [docs/api.md](docs/api.md).
 - Credentials remain server-only environment variables.
 - Framing, MIME sniffing, referrer leakage, and unused browser permissions are restricted with response headers.
 - Chat questions and code submissions have explicit size limits.
+- Password reset tokens are single-use and expire after one hour. Brevo credentials remain server-only.
 - CI runs linting, type checks, coverage, builds, E2E tests, dependency auditing, static review, and secret scanning.
 - Deployment health checks verify database connectivity without returning internal error details.
 
