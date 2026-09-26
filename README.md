@@ -1,5 +1,7 @@
 # NullBreach
 
+![Open Graph NullBreach](assets/og-nullbreach.webp)
+
 NullBreach is an open-source AppSec assistant for authenticated users. It answers secure-development questions and analyzes code for OWASP-aligned risks, impact, and remediation guidance.
 
 The application is a single Next.js deployment containing three internal product areas: the public landing, the authenticated frontend, and the backend boundary. Vercel Microfrontends mounts it under the existing `wavival.dev` domain without coupling its deployment lifecycle to the portfolio.

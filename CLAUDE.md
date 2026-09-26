@@ -33,7 +33,7 @@ Use `npm run db:migrate:deploy` for committed migrations. Create schema changes 
 
 - Work branches: `feature/*`, `fix/*`, or `chore/*`.
 - Commits: `type(scope): message`.
-- Allowed types: `feature`, `fix`, and `chore`.
+- Allowed types: `feat`, `fix`, and `chore`.
 - Allowed scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, and `core`.
 - Commit headers and generated documentation must not contain em dashes.
 - Remove unused dependencies, variables, imports, routes, and documentation in the same change that makes them obsolete.
