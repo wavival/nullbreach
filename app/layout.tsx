@@ -36,12 +36,21 @@ export const metadata: Metadata = {
     url: "https://wavival.dev/nullbreach",
     locale: "es_CO",
     alternateLocale: ["en_US"],
+    images: [
+      {
+        url: "/nullbreach/images/og-nullbreach.webp",
+        width: 1200,
+        height: 630,
+        alt: "NullBreach: análisis de código con IA basado en OWASP y chat de seguridad",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "NullBreach | AI AppSec assistant",
     description:
       "Find and understand application security vulnerabilities before attackers do.",
+    images: ["/nullbreach/images/og-nullbreach.webp"],
   },
 };
 
