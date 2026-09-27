@@ -7,6 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/nullbreach",
       disallow: [
         "/nullbreach/api/",
+        "/nullbreach/swagger",
         "/nullbreach/login",
         "/nullbreach/register",
         "/nullbreach/forgot-password",
@@ -15,6 +16,6 @@ export default function robots(): MetadataRoute.Robots {
         "/nullbreach/analyze",
       ],
     },
-    sitemap: "https://wavival.dev/nullbreach/sitemap.xml",
+    sitemap: "https://www.wavival.dev/nullbreach/sitemap.xml",
   };
 }

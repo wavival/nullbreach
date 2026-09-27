@@ -8,13 +8,14 @@ The application is a single Next.js deployment containing three internal product
 
 ## Live services
 
-- Production: [wavival.dev/nullbreach](https://wavival.dev/nullbreach)
+- Production: [www.wavival.dev/nullbreach](https://www.wavival.dev/nullbreach)
 - Direct production project URL: [null-breach.vercel.app/nullbreach](https://null-breach.vercel.app/nullbreach)
 - Staging: [nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach](https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach)
 - Production deployments: [deployment workflow](https://github.com/wavival/nullbreach/actions/workflows/deploy-production.yml)
 - Vercel project: [wavivals-projects/nullbreach](https://vercel.com/wavivals-projects/nullbreach)
 - API reference: [docs/api.md](docs/api.md)
-- Production health: [`/nullbreach/api/health`](https://wavival.dev/nullbreach/api/health)
+- Production health: [`/nullbreach/api/health`](https://www.wavival.dev/nullbreach/api/health)
+- Swagger UI: [`/nullbreach/swagger`](https://www.wavival.dev/nullbreach/swagger)
 
 Staging uses the Vercel `preview` environment with variables scoped to the `stg` branch. Production uses the Vercel `production` environment and the `main` branch. They use separate Prisma Postgres resources and separate secrets. Automatic Git deployments are disabled, so other branches do not create Vercel deployments.
 
@@ -115,7 +116,7 @@ Create schema changes with `npx prisma migrate dev --name <description>`. Never 
 
 The API includes registration, NextAuth, Google OAuth, password recovery, authenticated chat, authenticated code analysis, history, and public health checks. Request bodies, response schemas, limits, authentication requirements, and error statuses are documented in [docs/api.md](docs/api.md).
 
-Production API base URL: [https://wavival.dev/nullbreach/api](https://wavival.dev/nullbreach/api)
+Production API base URL: [https://www.wavival.dev/nullbreach/api](https://www.wavival.dev/nullbreach/api)
 
 ## SEO, accessibility, and indexing
 
