@@ -46,6 +46,7 @@ export default function ResetPasswordPage() {
           name="password"
           label="New password"
           minLength={8}
+          autoComplete="new-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           placeholder="New password"
@@ -55,6 +56,7 @@ export default function ResetPasswordPage() {
           name="confirmPassword"
           label="Confirm password"
           minLength={8}
+          autoComplete="new-password"
           value={confirm}
           onChange={(event) => setConfirm(event.target.value)}
           placeholder="Confirm password"

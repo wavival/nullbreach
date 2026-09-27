@@ -238,8 +238,6 @@ export function Landing({ lang }: { lang: Lang }) {
             <Link
               className="primary-btn hidden h-9 px-lg text-body md:inline-flex"
               href={login}
-              target="_blank"
-              rel="noreferrer"
             >
               {t.signIn}
               <Icon name="arrow-right" className="size-4" />
@@ -268,12 +266,7 @@ export function Landing({ lang }: { lang: Lang }) {
                   </span>
                   <LangToggle lang={lang} />
                 </div>
-                <Link
-                  href={login}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="primary-btn justify-center"
-                >
+                <Link href={login} className="primary-btn justify-center">
                   {t.signIn}
                   <Icon name="arrow-right" className="size-4" />
                 </Link>
@@ -313,8 +306,6 @@ export function Landing({ lang }: { lang: Lang }) {
                   <div className="mt-xs flex flex-wrap items-center gap-md">
                     <Link
                       href={login}
-                      target="_blank"
-                      rel="noreferrer"
                       className="primary-btn h-12 px-xl text-body"
                     >
                       {t.signIn}
@@ -558,8 +549,6 @@ export function Landing({ lang }: { lang: Lang }) {
               </p>
               <Link
                 href={login}
-                target="_blank"
-                rel="noreferrer"
                 className="primary-btn relative mt-sm h-12 px-xl text-body"
               >
                 {t.signIn}
@@ -608,7 +597,7 @@ export function Landing({ lang }: { lang: Lang }) {
                 Valentina Ramírez
               </span>
               <a
-                href="https://wavival.dev"
+                href="https://www.wavival.dev"
                 target="_blank"
                 rel="noreferrer"
                 className="font-mono text-body text-secondary"
@@ -651,9 +640,7 @@ export function Landing({ lang }: { lang: Lang }) {
               </h4>
               <a href={`#${t.features}`}>~/{t.features}</a>
               <a href={`#${t.how}`}>~/{t.how}</a>
-              <Link href={login} target="_blank" rel="noreferrer">
-                ~/login
-              </Link>
+              <Link href={login}>~/login</Link>
             </nav>
             <nav
               aria-label={lang === "es" ? "Recursos" : "Resources"}
@@ -672,7 +659,7 @@ export function Landing({ lang }: { lang: Lang }) {
                 {t.repository}
               </a>
               <a
-                href="https://wavival.dev"
+                href="https://www.wavival.dev"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-sm"
@@ -706,7 +693,7 @@ export function Landing({ lang }: { lang: Lang }) {
                 <Icon name="linkedin" className="size-4" />
               </a>
               <a
-                href="https://wavival.dev"
+                href="https://www.wavival.dev"
                 target="_blank"
                 rel="noreferrer"
                 className="text-secondary"

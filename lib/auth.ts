@@ -5,49 +5,64 @@ import GoogleProvider from "next-auth/providers/google";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { appPath } from "@/lib/paths";
+import { normalizeEmail } from "@/lib/validation";
+
+const providers: NextAuthOptions["providers"] = [
+  CredentialsProvider({
+    name: "Email and password",
+    credentials: {
+      email: { label: "Email", type: "email" },
+      password: { label: "Password", type: "password" },
+    },
+    async authorize(credentials) {
+      if (!credentials?.email || !credentials.password) return null;
+      const user = await prisma.user.findUnique({
+        where: { email: credentials.email.toLowerCase() },
+      });
+      if (
+        !user ||
+        !(await verifyPassword(credentials.password, user.password_hash))
+      )
+        return null;
+      return { id: user.id, email: user.email };
+    },
+  }),
+];
+
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+  );
+}
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
   pages: { signIn: appPath("/login"), newUser: appPath("/register") },
-  providers: [
-    CredentialsProvider({
-      name: "Email and password",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) return null;
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase() },
-        });
-        if (
-          !user ||
-          !(await verifyPassword(credentials.password, user.password_hash))
-        )
-          return null;
-        return { id: user.id, email: user.email };
-      },
-    }),
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-      ? [
-          GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          }),
-        ]
-      : []),
-  ],
+  providers,
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider !== "google" || !user.email) return true;
-      const email = user.email.toLowerCase();
-      await prisma.user.upsert({
-        where: { email },
-        update: {},
-        create: { email, password_hash: "" },
-      });
-      return true;
+
+      try {
+        const email = normalizeEmail(user.email);
+        const databaseUser = await prisma.user.upsert({
+          where: { email },
+          update: {},
+          create: {
+            email,
+            password_hash: await hashPassword(crypto.randomUUID()),
+          },
+        });
+        user.id = databaseUser.id;
+        user.email = databaseUser.email;
+        return true;
+      } catch (error) {
+        console.error("Google sign-in persistence failed", error);
+        return false;
+      }
     },
     async jwt({ token, user }) {
       if (user?.email) {
