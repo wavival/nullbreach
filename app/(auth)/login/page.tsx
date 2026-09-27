@@ -12,6 +12,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
@@ -27,6 +28,7 @@ export default function LoginPage() {
     else router.push(appPath("/dashboard"));
   }
   async function googleLogin() {
+    setGoogleLoading(true);
     await signIn("google", { callbackUrl: appPath("/dashboard") });
   }
   return (
@@ -49,6 +51,7 @@ export default function LoginPage() {
             required
             name="email"
             type="email"
+            autoComplete="email"
             className="mt-1 w-full rounded border border-border bg-surface-alt p-2 text-foreground outline-none focus:border-primary"
           />
         </label>
@@ -57,6 +60,7 @@ export default function LoginPage() {
           name="password"
           label="Password"
           minLength={8}
+          autoComplete="current-password"
         />
         <Link
           className="block text-right text-body-sm text-primary"
@@ -77,6 +81,7 @@ export default function LoginPage() {
         </button>
         <button
           type="button"
+          disabled={loading || googleLoading}
           onClick={googleLogin}
           className="flex w-full items-center justify-center gap-sm rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary"
         >
