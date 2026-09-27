@@ -5,7 +5,7 @@ import "./globals.css";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://wavival.dev"),
+  metadataBase: new URL("https://www.wavival.dev"),
   title: {
     default: "NullBreach | AI AppSec assistant",
     template: "%s | NullBreach",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: "NullBreach | AI AppSec assistant",
     description:
       "Find and understand application security vulnerabilities before attackers do.",
-    url: "https://wavival.dev/nullbreach",
+    url: "https://www.wavival.dev/nullbreach",
     locale: "es_CO",
     alternateLocale: ["en_US"],
     images: [

@@ -5,15 +5,15 @@ export const metadata: Metadata = {
   description:
     "Find and understand application security vulnerabilities before attackers do.",
   alternates: {
-    canonical: "/nullbreach/en",
+    canonical: "https://www.wavival.dev/nullbreach/en",
     languages: {
-      es: "/nullbreach",
-      en: "/nullbreach/en",
+      es: "https://www.wavival.dev/nullbreach",
+      en: "https://www.wavival.dev/nullbreach/en",
     },
   },
   openGraph: {
     locale: "en_US",
-    url: "https://wavival.dev/nullbreach/en",
+    url: "https://www.wavival.dev/nullbreach/en",
   },
 };
 
