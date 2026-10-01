@@ -40,14 +40,16 @@ Valid prefixes are `feature`, `fix`, and `chore`. Dependabot branches are accept
 Use strict Conventional Commits:
 
 ```text
-feature(auth): add registration validation
+feat(auth): add registration validation
 fix(api): reject oversized chat questions
 chore(docs): document the health endpoint
 ```
 
-Allowed types are `feat`, `fix`, and `chore`.
+Enforced by `commitlint.config.cjs`, which extends `@lumina-w/dev-standards/commitlint`.
 
-Allowed scopes are `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, and `core`.
+Allowed types are `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, and `revert`.
+
+Allowed scopes are `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`, `seo`, `a11y`, and `billing`.
 
 Do not use em dashes in commit headers or generated documentation. Local hooks and CI enforce branch names, commit format, and common secret patterns.
 
