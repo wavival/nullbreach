@@ -32,10 +32,10 @@ Use `npm run db:migrate:deploy` for committed migrations. Create schema changes 
 ## Conventions
 
 - Work branches: `feature/*`, `fix/*`, or `chore/*`.
-- Commits: `type(scope): message`.
-- Allowed types: `feat`, `fix`, and `chore`.
-- Allowed scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, and `core`.
-- Commit headers and generated documentation must not contain em dashes.
+- Commits: `type(scope): message`, per `@lumina-w/dev-standards/commitlint` (`commitlint.config.cjs` extends it, cloned at tag `v0.6.0` via `dev-standards-ref` in `commit-lint.yml`/`pr-title.yml` with the `DEV_STANDARDS_DEPLOY_KEY` deploy-key secret).
+- Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+- Allowed scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`, `seo`, `a11y`, `billing`.
+- Commit headers and generated documentation must not contain em dashes (a local `no-em-dash` commitlint rule layered on top of the shared config).
 - Remove unused dependencies, variables, imports, routes, and documentation in the same change that makes them obsolete.
 
 ## Mandatory delivery flow
