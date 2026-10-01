@@ -49,12 +49,12 @@ Commit headers and generated documentation must not contain em dashes.
 
 Branch protection for `dev`, `stg`, and `main` must require:
 
-- branch flow validation
-- commitlint for every work commit and each promotion PR title
-- lint, format, TypeScript, Prisma validation, unit coverage, and Next.js build
+- branch flow validation (`validate-pr-base.yml`, thin caller of `lumina-w/agents`' `shared-validate-pr-base.yml`)
+- commitlint for every work commit and each promotion PR title (`commit-lint.yml`/`pr-title.yml`, thin callers of the same repo's `shared-commitlint.yml`/`shared-pr-title.yml`; `commitlint.config.cjs` stays local, pending a `DEV_STANDARDS_DEPLOY_KEY` secret to extend `@lumina-w/dev-standards/commitlint`)
+- lint, format, TypeScript, Prisma validation, unit coverage, and Next.js build (`ci.yml`, unchanged)
 - Playwright E2E tests
 - automated static review
-- secret and dependency scanning
+- secret scanning (`gitleaks.yml`, thin caller of `shared-gitleaks.yml`) and dependency scanning (`security-scan.yml`, unchanged)
 - successful staging deployment before production promotion
 
 Use Node.js 24.x and npm 11 or newer. The stack is Next.js App Router, React, TypeScript, Prisma ORM, Prisma Postgres, NextAuth, Jest, Playwright, GitHub Actions, and Vercel.
