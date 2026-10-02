@@ -55,6 +55,7 @@ prisma/                 Database schema and migrations
 __tests__/unit/         Jest unit tests
 __tests__/e2e/          Playwright end-to-end tests
 docs/api.md             HTTP API reference
+docs/ROADMAP.md          Pending work and decisions
 .github/workflows/      CI, security, promotion gates, and deployments
 .githooks/              Local branch, commit, and secret checks
 microfrontends.json     Shared-domain routing contract with wavival.dev
