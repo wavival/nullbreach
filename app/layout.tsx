@@ -13,13 +13,7 @@ export const metadata: Metadata = {
   description:
     "NullBreach helps developers find, understand, and remediate application security vulnerabilities with AI-assisted chat and code analysis.",
   applicationName: "NullBreach",
-  keywords: [
-    "AppSec",
-    "application security",
-    "OWASP",
-    "SAST",
-    "code analysis",
-  ],
+  keywords: ["AppSec", "application security", "OWASP", "code analysis"],
   alternates: {
     canonical: "/nullbreach",
     languages: {

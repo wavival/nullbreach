@@ -13,7 +13,7 @@ const copy = {
     tagline: "Asistente de ciberseguridad con IA",
     hero: "Encuentra y entiende vulnerabilidades antes que los atacantes.",
     intro:
-      "NullBreach combina chat con IA y análisis estático de código para razonar sobre OWASP, modelado de amenazas y endurecimiento, en lenguaje claro.",
+      "NullBreach combina un chat con IA y un análisis de código asistido por IA para razonar sobre OWASP y desarrollo seguro, en lenguaje claro.",
     toolsTitle: "Seguridad ofensiva y defensiva, en un solo lugar",
     toolsBody: "Tres herramientas para desarrolladores y equipos de seguridad.",
     howTitle: "De la duda al hallazgo en tres pasos",
@@ -23,7 +23,7 @@ const copy = {
     resources: "Recursos",
     repository: "Repositorio",
     author: "Autora",
-    allRights: "Todos los derechos reservados.",
+    allRights: "Código abierto bajo licencia MIT.",
     language: "idioma",
     project: "proyecto",
     scanning: "escaneando…",
@@ -39,7 +39,7 @@ const copy = {
     tagline: "AI-powered cybersecurity assistant",
     hero: "Find and understand vulnerabilities before attackers do.",
     intro:
-      "NullBreach pairs an AI chat with static code analysis to reason about OWASP, threat modeling, and hardening, in plain language.",
+      "NullBreach pairs an AI chat with AI-assisted code analysis to reason about OWASP and secure development, in plain language.",
     toolsTitle: "Offensive and defensive security, in one place",
     toolsBody: "Three tools built for developers and security teams.",
     howTitle: "From question to finding in three steps",
@@ -49,7 +49,7 @@ const copy = {
     resources: "Resources",
     repository: "Repository",
     author: "Author",
-    allRights: "All rights reserved.",
+    allRights: "Open source under the MIT license.",
     language: "language",
     project: "project",
     scanning: "scanning…",
@@ -63,24 +63,24 @@ const features = [
     "message-square",
     "Chat de ciberseguridad",
     "Cybersecurity chat",
-    "Conversa sobre vulnerabilidades, vectores de ataque y mitigaciones. Respuestas con contexto y referencias accionables.",
-    "Talk through vulnerabilities, attack vectors, and mitigations. Context-rich answers with actionable references.",
+    "Conversa sobre vulnerabilidades, controles y desarrollo seguro. Tus preguntas y respuestas quedan guardadas en tu cuenta.",
+    "Talk through vulnerabilities, controls, and secure development. Your questions and answers are saved to your account.",
   ],
   [
     "analyze",
     "scan-line",
     "Analizador de código",
     "Code analyzer",
-    "Pega tu código fuente y recibe un análisis estático con hallazgos clasificados por severidad.",
-    "Paste your source code and get static analysis with findings ranked by severity.",
+    "Pega tu código fuente y recibe un análisis asistido por IA con severidad, impacto y remediación.",
+    "Paste your source code and get an AI-assisted analysis with severity, impact, and remediation.",
   ],
   [
     "owasp",
     "bug",
-    "OWASP y modelado de amenazas",
-    "OWASP & threat modeling",
-    "Mapea riesgos al Top 10 de OWASP y razona sobre superficies de ataque y trust boundaries.",
-    "Map risks to the OWASP Top 10 and reason about attack surfaces and trust boundaries.",
+    "Guía basada en OWASP",
+    "OWASP-based guidance",
+    "Las respuestas y el análisis se apoyan en OWASP y en prácticas de desarrollo seguro.",
+    "Answers and analysis draw on OWASP and secure-development practices.",
   ],
 ] as const;
 const steps = [
@@ -89,16 +89,16 @@ const steps = [
     "lock",
     "Crea tu cuenta",
     "Create your account",
-    "Regístrate e inicia sesión con autenticación segura basada en JWT.",
-    "Register and sign in with secure JWT-based authentication.",
+    "Regístrate con correo y clave, o inicia sesión con Google.",
+    "Sign up with email and password, or sign in with Google.",
   ],
   [
     "scan ./src",
     "terminal",
     "Pregunta o analiza",
     "Ask or analyze",
-    "Abre un chat o envía código al analizador para obtener un diagnóstico.",
-    "Open a chat or send code to the analyzer for a diagnosis.",
+    "Abre un chat o envía código al analizador para obtener un análisis.",
+    "Open a chat or send code to the analyzer for an analysis.",
   ],
   [
     "patch --apply",
@@ -328,7 +328,7 @@ export function Landing({ lang }: { lang: Lang }) {
                         aria-hidden="true"
                         className="mr-xs inline-block size-1.5 animate-pulse rounded-full bg-primary"
                       />
-                      live
+                      {lang === "es" ? "ejemplo" : "example"}
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-x-md gap-y-xs">
@@ -452,8 +452,8 @@ export function Landing({ lang }: { lang: Lang }) {
                 <li>
                   <span className="text-primary">&gt;</span>{" "}
                   {lang === "es"
-                    ? "Análisis estático que combina detección determinista con razonamiento del LLM."
-                    : "Static analysis combining deterministic detection with LLM reasoning."}
+                    ? "Análisis de código con un modelo de lenguaje: es asistencia, no una verificación determinista."
+                    : "Code analysis with a language model: it is assistance, not deterministic verification."}
                 </li>
                 <li>
                   <span className="text-primary">&gt;</span>{" "}
@@ -464,8 +464,8 @@ export function Landing({ lang }: { lang: Lang }) {
                 <li>
                   <span className="text-primary">&gt;</span>{" "}
                   {lang === "es"
-                    ? "Cada hallazgo trae categoría OWASP, severidad y remediación."
-                    : "Every finding includes OWASP category, severity, and remediation."}
+                    ? "El análisis explica severidad, impacto y remediación."
+                    : "The analysis explains severity, impact, and remediation."}
                 </li>
               </ul>
               <div className="flex flex-wrap gap-sm">
@@ -479,7 +479,9 @@ export function Landing({ lang }: { lang: Lang }) {
               <div>
                 <dt className="text-h4 text-primary">OWASP</dt>
                 <dd className="text-body-sm text-foreground-muted">
-                  {lang === "es" ? "Top 10 cubierto" : "Top 10 covered"}
+                  {lang === "es"
+                    ? "Guía basada en OWASP"
+                    : "OWASP-based guidance"}
                 </dd>
               </div>
               <div>
@@ -489,9 +491,11 @@ export function Landing({ lang }: { lang: Lang }) {
                 </dd>
               </div>
               <div>
-                <dt className="text-h4 text-primary">SAST</dt>
+                <dt className="text-h4 text-primary">CODE</dt>
                 <dd className="text-body-sm text-foreground-muted">
-                  {lang === "es" ? "Análisis de código" : "Code analysis"}
+                  {lang === "es"
+                    ? "Análisis asistido por IA"
+                    : "AI-assisted analysis"}
                 </dd>
               </div>
             </dl>

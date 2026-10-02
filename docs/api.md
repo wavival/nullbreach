@@ -117,10 +117,16 @@ Request:
 { "token": "reset-token", "password": "minimum-eight-characters" }
 ```
 
+Success, `200`:
+
+```json
+{ "message": "Password updated." }
+```
+
 Errors:
 
-- `400`: invalid token or password length.
-- `200`: password updated successfully.
+- `400`: invalid token or password length, or the reset link is invalid or expired.
+- `503`: password reset persistence is unavailable.
 
 ## Chat
 
