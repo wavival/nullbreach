@@ -12,7 +12,7 @@ export default function AppNavigation({ email }: { email?: string | null }) {
   return (
     <nav
       aria-label="Application navigation"
-      className="mx-auto flex max-w-6xl items-center gap-5 p-4 font-mono"
+      className="mx-auto flex max-w-7xl items-center gap-5 p-4 font-mono"
     >
       <Link className="font-bold text-primary" href={dashboardPath}>
         <span className="text-primary">[</span>nullbreach
