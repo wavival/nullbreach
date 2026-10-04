@@ -7,7 +7,7 @@ import { appPath } from "@/lib/paths";
 import GoogleMark from "@/components/GoogleMark";
 import PasswordInput from "@/components/PasswordInput";
 
-type LoginFormProps = { locale: "en" | "es" };
+type LoginFormProps = { locale: "en" | "es"; googleEnabled: boolean };
 
 const copy = {
   en: {
@@ -19,6 +19,8 @@ const copy = {
     signingIn: "Signing in…",
     signIn: "Sign in",
     google: "Continue with Google",
+    googleUnavailable: "Google sign-in is not configured.",
+    googleFailed: "Could not start Google sign-in. Please try again.",
     newHere: "New here?",
     createAccount: "Create an account",
     backHome: "Back to home",
@@ -36,6 +38,8 @@ const copy = {
     signingIn: "Iniciando sesión…",
     signIn: "Iniciar sesión",
     google: "Continuar con Google",
+    googleUnavailable: "El acceso con Google no está configurado.",
+    googleFailed: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
     newHere: "¿Aún no tienes cuenta?",
     createAccount: "Crear una cuenta",
     backHome: "Volver al inicio",
@@ -46,7 +50,7 @@ const copy = {
   },
 } as const;
 
-export default function LoginForm({ locale }: LoginFormProps) {
+export default function LoginForm({ locale, googleEnabled }: LoginFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -70,8 +74,22 @@ export default function LoginForm({ locale }: LoginFormProps) {
   }
 
   async function googleLogin() {
+    if (!googleEnabled) return;
     setGoogleLoading(true);
-    await signIn("google", { callbackUrl: appPath("/dashboard") });
+    setError(null);
+    try {
+      const result = await signIn("google", {
+        callbackUrl: appPath("/dashboard"),
+        redirect: true,
+      });
+      if (result?.error) {
+        setError(text.googleFailed);
+        setGoogleLoading(false);
+      }
+    } catch {
+      setError(text.googleFailed);
+      setGoogleLoading(false);
+    }
   }
 
   return (
@@ -141,11 +159,13 @@ export default function LoginForm({ locale }: LoginFormProps) {
             </button>
             <button
               type="button"
-              disabled={loading || googleLoading}
+              disabled={!googleEnabled || loading || googleLoading}
               onClick={googleLogin}
-              className="flex w-full items-center justify-center gap-sm rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+              title={googleEnabled ? undefined : text.googleUnavailable}
+              className="flex w-full items-center justify-center gap-sm rounded border border-border p-2 font-mono text-body-sm text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <GoogleMark /> {text.google}
+              <GoogleMark />{" "}
+              {googleEnabled ? text.google : text.googleUnavailable}
             </button>
             <p className="text-body-sm text-foreground-muted">
               {text.newHere}{" "}
@@ -175,7 +195,10 @@ export default function LoginForm({ locale }: LoginFormProps) {
             >
               GitHub
             </a>
-            <a className="hover:text-primary" href={appPath("/swagger")}>
+            <a
+              className="hover:text-primary"
+              href="https://github.com/wavival/nullbreach/blob/dev/docs/api.md"
+            >
               {text.api}
             </a>
             <a className="hover:text-primary" href={appPath("/")}>

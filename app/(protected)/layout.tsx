@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getCurrentSession } from "@/lib/auth";
 import AppNavigation from "@/components/AppNavigation";
+import AppFooter from "@/components/AppFooter";
 import { appPath } from "@/lib/paths";
 
 export const metadata: Metadata = {
@@ -20,9 +21,10 @@ export default async function ProtectedLayout({
       <header className="border-b border-border bg-surface">
         <AppNavigation email={session.user.email} />
       </header>
-      <main id="main" className="mx-auto max-w-6xl p-6 terminal-enter">
+      <main id="main" className="app-main terminal-enter">
         {children}
       </main>
+      <AppFooter />
     </div>
   );
 }

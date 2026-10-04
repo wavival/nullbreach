@@ -6,7 +6,7 @@ What is pending. The detail of each change lives in [CHANGELOG.md](../CHANGELOG.
 
 ## Needs a decision from the owner
 
-- [ ] Move the public landing to Astro. Today the landing is `features/landing/` inside the Next.js application, and [CLAUDE.md](../CLAUDE.md) says not to reintroduce Astro. If the move is confirmed, update `CLAUDE.md`, `AGENTS.md`, `DESIGN.md`, `README.md` and `microfrontends.json` in the same change, and keep `/nullbreach` and `/nullbreach/en` as the public routes.
+- [x] Move the public landing to Astro under `apps/landing/`; keep the authenticated product in Next.js and preserve `/nullbreach` and `/nullbreach/en` as public landing routes.
 - [ ] Decide whether a second registration of an existing email should answer `409` (today) or the same neutral answer as password recovery.
 - [ ] Decide how a new account is verified before a Google sign-in can link to it by email.
 
