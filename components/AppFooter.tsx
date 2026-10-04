@@ -9,7 +9,8 @@ export default function AppFooter() {
           className="font-mono font-bold text-foreground"
           href={appPath("/")}
         >
-          <span className="text-primary">[</span>nullbreach
+          <span className="text-primary">[</span>
+          <span className="text-primary">null</span>breach
           <span className="text-primary">]</span>
         </Link>
         <p className="mt-2 font-mono text-body-sm text-foreground-muted">
@@ -22,14 +23,16 @@ export default function AppFooter() {
           target="_blank"
           rel="noreferrer"
         >
-          Repository
+          ~/repository
         </a>
         <a href="https://github.com/wavival/nullbreach/blob/dev/docs/api.md">
-          API documentation
+          ~/api-docs
         </a>
-        <Link href={appPath("/")}>Landing</Link>
+        <Link href={appPath("/")}>~/landing</Link>
       </nav>
-      <small>MIT · © 2026 NullBreach</small>
+      <small>
+        MIT · © {new Date().getFullYear()} NullBreach · Valentina Ramírez
+      </small>
     </footer>
   );
 }

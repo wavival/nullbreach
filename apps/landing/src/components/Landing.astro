@@ -20,6 +20,8 @@ const copy = es
       signIn: "iniciar sesión",
       seeFeatures: "ver características",
       tagline: "Asistente de ciberseguridad con IA",
+      portraitText:
+        "Desarrolladora full-stack y autora de NullBreach: aplicación en Next.js, Prisma y OpenAI.",
       hero: "Encuentra y entiende vulnerabilidades antes que los atacantes.",
       intro:
         "NullBreach combina chat con IA y análisis estático de código para razonar sobre OWASP, modelado de amenazas y endurecimiento, en lenguaje claro.",
@@ -31,6 +33,7 @@ const copy = es
       product: "Producto",
       resources: "Recursos",
       repository: "Repositorio",
+      portfolio: "Portafolio",
       apiDocs: "Documentación API",
       allRights: "Todos los derechos reservados.",
       language: "idioma",
@@ -57,6 +60,8 @@ const copy = es
       signIn: "sign in",
       seeFeatures: "see features",
       tagline: "AI-powered cybersecurity assistant",
+      portraitText:
+        "Full-stack developer and author of NullBreach: a Next.js, Prisma, and OpenAI application.",
       hero: "Find and understand vulnerabilities before attackers do.",
       intro:
         "NullBreach pairs an AI chat with static code analysis to reason about OWASP, threat modeling, and hardening in plain language.",
@@ -68,6 +73,7 @@ const copy = es
       product: "Product",
       resources: "Resources",
       repository: "Repository",
+      portfolio: "Portfolio",
       apiDocs: "API documentation",
       allRights: "All rights reserved.",
       language: "language",
@@ -156,17 +162,41 @@ const steps = es
       ],
     ];
 const alternate = es ? `${productUrl}/en` : productUrl;
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "NullBreach",
-  applicationCategory: "SecurityApplication",
-  operatingSystem: "Web",
-  isAccessibleForFree: true,
-  license: "https://opensource.org/license/mit",
-  url: `${productUrl}${es ? "" : "/en"}`,
-  description: copy.description,
-};
+const pageUrl = `${productUrl}${es ? "" : "/en"}`;
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": `${productUrl}#software`,
+    name: "NullBreach",
+    applicationCategory: "SecurityApplication",
+    operatingSystem: "Web",
+    isAccessibleForFree: true,
+    license: "https://opensource.org/license/mit",
+    url: productUrl,
+    description: copy.description,
+    inLanguage: lang,
+    featureList: [
+      "AI-assisted AppSec chat",
+      "Static code analysis",
+      "OWASP-aligned security guidance",
+    ],
+    author: {
+      "@type": "Person",
+      name: "Valentina Ramírez",
+      url: "https://www.wavival.dev",
+      sameAs: ["https://instagram.com/wavival"],
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${productUrl}#website`,
+    name: "NullBreach",
+    url: productUrl,
+    inLanguage: ["es", "en"],
+  },
+];
 ---
 
 <!doctype html>
@@ -176,21 +206,31 @@ const schema = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={copy.description} />
     <meta name="robots" content="index,follow,max-image-preview:large" />
-    <link rel="canonical" href={`${productUrl}${es ? "" : "/en"}`} />
+    <link rel="canonical" href={pageUrl} />
     <link rel="alternate" hreflang={es ? "en" : "es"} href={alternate} />
     <link rel="alternate" hreflang="x-default" href={productUrl} />
     <link rel="icon" type="image/svg+xml" href={`${basePath}favicon.svg`} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NullBreach" />
+    <meta property="og:locale" content={es ? "es_CO" : "en_US"} />
+    <meta property="og:locale:alternate" content={es ? "en_US" : "es_CO"} />
     <meta property="og:title" content={copy.title} />
     <meta property="og:description" content={copy.description} />
-    <meta property="og:url" content={`${productUrl}${es ? "" : "/en"}`} />
+    <meta property="og:url" content={pageUrl} />
     <meta
       property="og:image"
       content="https://www.wavival.dev/nullbreach/images/og-nullbreach.webp"
     />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="NullBreach AppSec workspace" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={copy.title} />
     <meta name="twitter:description" content={copy.description} />
+    <meta
+      name="twitter:image"
+      content="https://www.wavival.dev/nullbreach/images/og-nullbreach.webp"
+    />
     <title>{copy.title}</title>
     <script
       type="application/ld+json"
@@ -198,13 +238,24 @@ const schema = {
     ></script>
   </head>
   <body>
+    <div class="page-loader" aria-hidden="true">
+      <span class="brand">
+        <span>[</span>
+        <span class="brand-null">null</span>
+        <span class="brand-breach">breach</span>
+        <span>]</span>
+      </span>
+    </div>
     <a class="skip-link" href="#main">
       {es ? "Saltar al contenido" : "Skip to content"}
     </a>
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href={`#${copy.home}`} aria-label="NullBreach">
-          [nullbreach]
+          <span aria-hidden="true">[</span>
+          <span class="brand-null">null</span>
+          <span class="brand-breach">breach</span>
+          <span aria-hidden="true">]</span>
         </a>
         <nav aria-label={es ? "Navegación principal" : "Main navigation"}>
           <a href={`#${copy.features}`}>~/{copy.features}</a>
@@ -231,11 +282,13 @@ const schema = {
             </a>
           </div>
           <a class="button primary desktop-login" href={`${productUrl}/login`}>
+            <span aria-hidden="true">~/</span>
             {copy.signIn}
-            <span aria-hidden="true">→</span>
           </a>
           <details class="mobile-menu">
-            <summary aria-label={es ? "Abrir menú" : "Open menu"}>☰</summary>
+            <summary aria-label={es ? "Abrir menú" : "Open menu"}>
+              <span aria-hidden="true">☰</span>
+            </summary>
             <div class="mobile-menu-panel">
               <a href={`#${copy.features}`}>~/{copy.features}</a>
               <a href={`#${copy.how}`}>~/{copy.how}</a>
@@ -247,8 +300,8 @@ const schema = {
                 ~/{copy.project}
               </a>
               <a class="button primary" href={`${productUrl}/login`}>
+                <span aria-hidden="true">~/</span>
                 {copy.signIn}
-                <span aria-hidden="true">→</span>
               </a>
             </div>
           </details>
@@ -281,12 +334,12 @@ const schema = {
               </p>
               <div class="actions">
                 <a class="button primary" href={`${productUrl}/login`}>
+                  <span aria-hidden="true">~/</span>
                   {copy.signIn}
-                  <span aria-hidden="true">→</span>
                 </a>
                 <a class="button ghost" href={`#${copy.features}`}>
+                  <span aria-hidden="true">~/</span>
                   {copy.seeFeatures}
-                  <span aria-hidden="true">→</span>
                 </a>
               </div>
             </div>
@@ -440,54 +493,104 @@ const schema = {
               <b>&gt;</b> {copy.ready}
             </h2>
             <p>{copy.readyBody}</p>
-            <a class="button primary" href={`${productUrl}/login`}>
-              {copy.signIn}
-              <span aria-hidden="true">→</span>
-            </a>
+            <div class="cta-actions">
+              <a class="button primary" href={`${productUrl}/login`}>
+                <span aria-hidden="true">~/</span>
+                {copy.signIn}
+              </a>
+              <a class="button ghost" href={docsUrl}>
+                <span aria-hidden="true">~/</span>
+                {copy.apiDocs}
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       <section
         class="creator-section"
-        aria-label={es ? "Creadora del proyecto" : "Project creator"}
+        aria-label={es ? "Sobre NullBreach" : "About NullBreach"}
       >
-        <img
-          src={`${basePath}profile.webp`}
-          width="128"
-          height="128"
-          loading="lazy"
-          decoding="async"
-          alt={
-            es
-              ? "Retrato de la creadora de NullBreach"
-              : "Portrait of the NullBreach creator"
-          }
-        />
+        <div class="creator-card">
+          <img
+            src={`${basePath}profile.webp`}
+            width="128"
+            height="128"
+            loading="lazy"
+            decoding="async"
+            alt={
+              es
+                ? "Valentina Ramírez, autora de NullBreach"
+                : "Valentina Ramírez, author of NullBreach"
+            }
+          />
+          <div>
+            <span class="label">$ whoami</span>
+            <h2>Valentina Ramírez</h2>
+            <a href="https://www.wavival.dev" target="_blank" rel="noreferrer">
+              @wavival
+            </a>
+            <p>{copy.portraitText}</p>
+          </div>
+        </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div>
-        <a class="brand" href={`#${copy.home}`}>
-          [nullbreach]
-        </a>
-        <p># {copy.footer}</p>
+      <div class="footer-main">
+        <div>
+          <a class="brand" href={`#${copy.home}`}>
+            <span aria-hidden="true">[</span>
+            <span class="brand-null">null</span>
+            <span class="brand-breach">breach</span>
+            <span aria-hidden="true">]</span>
+          </a>
+          <p># {copy.footer}</p>
+        </div>
+        <nav aria-label={es ? "Enlaces del producto" : "Product links"}>
+          <h2>{copy.product}</h2>
+          <a href={`#${copy.features}`}>~/{copy.features}</a>
+          <a href={`#${copy.how}`}>~/{copy.how}</a>
+          <a href={`${productUrl}/login`}>~/login</a>
+        </nav>
+        <nav aria-label={es ? "Recursos" : "Resources"}>
+          <h2>{copy.resources}</h2>
+          <a
+            href="https://github.com/wavival/nullbreach"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ~/{copy.repository.toLowerCase()}
+          </a>
+          <a href={docsUrl}>~/api-docs</a>
+        </nav>
       </div>
-      <nav aria-label={es ? "Recursos" : "Resources"}>
-        <a href={`#${copy.features}`}>~/{copy.features}</a>
-        <a href={`#${copy.how}`}>~/{copy.how}</a>
-        <a
-          href="https://github.com/wavival/nullbreach"
-          target="_blank"
-          rel="noreferrer"
+      <div class="footer-bottom">
+        <small>
+          MIT · © {new Date().getFullYear()} NullBreach · Valentina Ramírez
+        </small>
+        <nav
+          aria-label={
+            es ? "Perfiles de Valentina Ramírez" : "Valentina Ramírez profiles"
+          }
         >
-          {copy.repository}
-        </a>
-        <a href={docsUrl}>{copy.apiDocs}</a>
-        <a href={`${productUrl}/login`}>{copy.signIn}</a>
-      </nav>
-      <small>MIT · © 2026 NullBreach</small>
+          <a
+            href="https://instagram.com/wavival"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ~/instagram
+          </a>
+          <a href="https://www.wavival.dev" target="_blank" rel="noreferrer">
+            ~/{copy.portfolio.toLowerCase()}
+          </a>
+        </nav>
+      </div>
     </footer>
+    <script>
+      window.setTimeout(() => {
+        document.querySelector(".page-loader")?.classList.add("is-hidden");
+      }, 1000);
+    </script>
   </body>
 </html>

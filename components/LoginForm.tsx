@@ -96,8 +96,10 @@ export default function LoginForm({ locale, googleEnabled }: LoginFormProps) {
     <main className="landing min-h-screen p-6">
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-[28rem] flex-col">
         <header className="flex items-center justify-between border-b border-border py-4 font-mono text-body-sm">
-          <a className="text-primary" href={appPath("/")}>
-            [nullbreach]
+          <a className="text-foreground" href={appPath("/")}>
+            <span className="text-primary">[</span>
+            <span className="text-primary">null</span>breach
+            <span className="text-primary">]</span>
           </a>
           <nav
             aria-label={
