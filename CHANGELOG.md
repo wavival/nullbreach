@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added `docs/ROADMAP.md` with the pending decisions, security work and product gaps.
 - Aligned the landing copy, license line and search keywords with what the code does: AI-assisted analysis instead of static analysis or SAST, and MIT instead of all rights reserved.
 - Answered a database failure in password reset with a 503 instead of an unhandled error, and corrected the reset-password section of `docs/api.md`.
 - Replaced the stale Supabase mention in the Codex checkpoint with Prisma Postgres.
