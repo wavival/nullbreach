@@ -1,26 +1,22 @@
 name: Delete merged branches
 
+# Thin caller. Logic in lumina-w/agents (delete-merged-branches.yml).
 on:
-  workflow_dispatch:
   schedule:
     - cron: "0 */12 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: List the branches that would be deleted without deleting them
+        type: boolean
+        default: false
 
 permissions:
   contents: write
   pull-requests: read
 
 jobs:
-  cleanup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete merged work branches
-        env:
-          GH_TOKEN: ${{ secrets.PROMOTE_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-        run: |
-          gh pr list --repo "$REPOSITORY" --state merged --json headRefName,headRepositoryOwner,headRepository,isCrossRepository \
-            --jq '.[] | select(.isCrossRepository == false) | select(.headRefName | test("^(feature|fix|chore)/")) | .headRefName' |
-          while read -r branch; do
-            [ -n "$branch" ] || continue
-            gh api --method DELETE "repos/$REPOSITORY/git/refs/heads/$branch" || true
-          done
+  sweep:
+    uses: lumina-w/agents/.github/workflows/delete-merged-branches.yml@v4
+    with:
+      dry_run: ${{ inputs.dry_run || false }}

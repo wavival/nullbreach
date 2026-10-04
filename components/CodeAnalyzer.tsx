@@ -33,7 +33,7 @@ export default function CodeAnalyzer() {
     }
   }
   return (
-    <section className="terminal-panel mx-auto max-w-4xl rounded-lg border border-border bg-surface/80 p-5 shadow-large">
+    <section className="terminal-panel mx-auto max-w-[56rem] rounded-lg border border-border bg-surface/80 p-5 shadow-large">
       <p className="font-mono text-body-sm text-primary">
         $ nullbreach scan ./src
       </p>
