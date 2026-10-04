@@ -43,10 +43,8 @@ The shared public contract is `https://www.wavival.dev/nullbreach`. The parent `
 - Product: [www.wavival.dev/nullbreach](https://www.wavival.dev/nullbreach)
 - Sign in: [www.wavival.dev/nullbreach/login](https://www.wavival.dev/nullbreach/login)
 - Sign in, Spanish: [www.wavival.dev/nullbreach/en/login](https://www.wavival.dev/nullbreach/en/login)
-- Swagger: [www.wavival.dev/nullbreach/swagger](https://www.wavival.dev/nullbreach/swagger)
-- OpenAPI: [www.wavival.dev/nullbreach/api/openapi](https://www.wavival.dev/nullbreach/api/openapi)
-- Health: [www.wavival.dev/nullbreach/api/health](https://www.wavival.dev/nullbreach/api/health)
 - API reference: [docs/api.md](docs/api.md)
+- Health: [www.wavival.dev/nullbreach/api/health](https://www.wavival.dev/nullbreach/api/health)
 
 ## Quick start
 
@@ -55,6 +53,9 @@ The shared public contract is `https://www.wavival.dev/nullbreach`. The parent `
 - Node.js 24.x
 - npm 11 or newer
 - PostgreSQL-compatible `DATABASE_URL`
+
+Google sign-in is enabled only when both `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are configured. See [.env.example](.env.example) for the OAuth callback URLs.
+
 - OpenAI API key for live chat and analysis
 
 ### Install and run the product

@@ -11,10 +11,11 @@ https://www.wavival.dev/nullbreach/api
 ```
 
 - Public health check: `https://www.wavival.dev/nullbreach/api/health`
-- OpenAPI document: `https://www.wavival.dev/nullbreach/api/openapi`
-- Interactive API reference: `https://www.wavival.dev/nullbreach/swagger`
+- API reference: <https://github.com/wavival/nullbreach/blob/dev/docs/api.md>
 - Local base URL: `http://localhost:3000/nullbreach/api`
 - Staging base URL: `https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach/api`
+
+The OpenAPI and Swagger routes exist in the application source at `/api/openapi` and `/swagger`. They currently return `404` on the production host, so this file is the reference until those routes are deployed.
 
 Do not use `/api` at the `wavival.dev` root or a direct Vercel project URL as public API bases.
 
