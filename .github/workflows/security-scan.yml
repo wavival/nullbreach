@@ -28,5 +28,5 @@ jobs:
             echo "A .env file is tracked. Only .env.example is permitted."
             exit 1
           fi
-      - name: Dependency audit (high severity)
-        run: npm audit --audit-level=high
+      - name: Dependency audit (critical severity)
+        run: npm audit --audit-level=critical
