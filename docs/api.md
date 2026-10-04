@@ -1,15 +1,22 @@
 # NullBreach API Reference
 
-## Base URLs
+**Last updated:** October 4, 2026
 
-- Production: `https://www.wavival.dev/nullbreach/api`
-- Direct production project URL: `https://null-breach.vercel.app/nullbreach/api`
-- Local: `http://localhost:3000/nullbreach/api`
-- Staging: `https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach/api`
+## Official API URL
 
-Interactive Swagger UI: `https://www.wavival.dev/nullbreach/swagger`
+The official production API base URL is:
 
-OpenAPI document: `https://www.wavival.dev/nullbreach/api/openapi`
+```text
+https://www.wavival.dev/nullbreach/api
+```
+
+- Public health check: `https://www.wavival.dev/nullbreach/api/health`
+- OpenAPI document: `https://www.wavival.dev/nullbreach/api/openapi`
+- Interactive API reference: `https://www.wavival.dev/nullbreach/swagger`
+- Local base URL: `http://localhost:3000/nullbreach/api`
+- Staging base URL: `https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach/api`
+
+Do not use `/api` at the `wavival.dev` root or a direct Vercel project URL as public API bases.
 
 All request and response bodies use JSON unless stated otherwise. Authentication uses the NextAuth session cookie issued by the same origin.
 

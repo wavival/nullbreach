@@ -1,12 +1,5 @@
-node_modules/
-.next/
 apps/landing/.astro/
 apps/landing/dist/
 coverage/
 playwright-report/
 test-results/
-out/
-.env*
-!.env.example
-*.tsbuildinfo
-.vercel

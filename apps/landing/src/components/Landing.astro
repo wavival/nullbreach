@@ -1,0 +1,433 @@
+---
+interface Props {
+  lang?: "es" | "en";
+}
+
+const { lang = "es" } = Astro.props;
+const es = lang === "es";
+const base = import.meta.env.BASE_URL;
+const basePath = base.endsWith("/") ? base : `${base}/`;
+const productUrl = "https://www.wavival.dev/nullbreach";
+const copy = es
+  ? {
+      title: "NullBreach | Asistente AppSec con IA",
+      description:
+        "Asistente AppSec de código abierto para analizar código y resolver dudas de desarrollo seguro con contexto OWASP.",
+      eyebrow: "nullbreach / appsec assistant",
+      hero: "Entiende el riesgo antes de que llegue a producción.",
+      lead: "NullBreach combina análisis de código y conversación con IA para convertir dudas de seguridad en decisiones claras, priorizadas y accionables.",
+      start: "Abrir el producto",
+      docs: "Ver documentación API",
+      nav: ["Características", "Flujo", "Principios", "Autora", "Contacto"],
+      langLink: "EN",
+      intro: "Una herramienta para pensar seguridad mientras construyes.",
+      introText:
+        "Pega un fragmento de código, formula una pregunta y recibe orientación para identificar superficies de ataque, clasificar impacto y planear una remediación. El producto está pensado para desarrolladores y equipos que necesitan contexto, no solo una alerta.",
+      capabilities: [
+        [
+          "Chat especializado",
+          "Conversa sobre vulnerabilidades, mitigaciones, controles y decisiones de arquitectura segura.",
+        ],
+        [
+          "Análisis de código",
+          "Envía código para revisar señales de riesgo y recibir una explicación orientada a impacto y remediación.",
+        ],
+        [
+          "Contexto OWASP",
+          "Conecta hallazgos con categorías OWASP, severidad y pasos de endurecimiento verificables.",
+        ],
+      ],
+      flowTitle: "De la duda al siguiente paso.",
+      flow: [
+        [
+          "01",
+          "Crea tu cuenta",
+          "Regístrate e inicia sesión para mantener separado tu historial de trabajo.",
+        ],
+        [
+          "02",
+          "Pregunta o analiza",
+          "Abre el chat o pega un fragmento de código para investigar una hipótesis.",
+        ],
+        [
+          "03",
+          "Prioriza y corrige",
+          "Usa el contexto de severidad, impacto y remediación para decidir qué atender primero.",
+        ],
+      ],
+      principles: "Diseñado para una práctica de AppSec más clara.",
+      principleItems: [
+        [
+          "Código abierto",
+          "El repositorio se publica bajo MIT: puedes estudiar, copiar, modificar y desplegar el proyecto respetando la licencia.",
+        ],
+        [
+          "Secretos en servidor",
+          "Las credenciales de base de datos, sesión y proveedores de IA no se envían al navegador.",
+        ],
+        [
+          "Límites explícitos",
+          "La IA aporta orientación técnica. No reemplaza una revisión profesional, un pentest ni un escáner dedicado.",
+        ],
+        [
+          "Entrega verificable",
+          "Pruebas, revisión estática, auditoría de dependencias y detección de secretos protegen cada promoción.",
+        ],
+      ],
+      faqTitle: "Preguntas frecuentes.",
+      faq: [
+        [
+          "¿NullBreach reemplaza un SAST o una auditoría?",
+          "No. Complementa el trabajo de seguridad con análisis y explicación contextual; conserva una revisión especializada para riesgos críticos.",
+        ],
+        [
+          "¿Qué ocurre con el código que envío?",
+          "El análisis se procesa desde el servidor. Consulta la documentación y la configuración del repositorio antes de usar datos sensibles.",
+        ],
+        [
+          "¿Puedo reutilizar el proyecto?",
+          "Sí. NullBreach usa licencia MIT. Revisa LICENSE y CONTRIBUTING.md antes de distribuir cambios.",
+        ],
+      ],
+      authorLabel: "Autora del proyecto",
+      authorTitle: "Valentina Ramírez",
+      authorText:
+        "Desarrolladora Full Stack colombiana, fundadora de Lúmina W y enfocada en backend, AppSec y productos propios. Construye NullBreach como un portafolio abierto para explorar desarrollo seguro con IA.",
+      authorLink: "Conoce su portafolio",
+      contactTitle: "Tu próxima idea merece código que la sostenga.",
+      contactText:
+        "Diseño y construyo productos completos: del backend a la interfaz que usan las personas. Con IA integrada y seguridad desde el diseño.",
+      contactMeta:
+        "Proyectos desde COP 2.000.000 / USD 500 según alcance. MVP desde 3 a 6 semanas. Disponibilidad limitada, respondo en 24 h.",
+      contactAction: "Contactar a Valentina",
+      footer: "Asistente de ciberseguridad con IA, construido en Colombia.",
+      updated: "Última actualización: octubre de 2026",
+    }
+  : {
+      title: "NullBreach | AI AppSec assistant",
+      description:
+        "Open-source AppSec assistant for code analysis and secure-development guidance with OWASP context.",
+      eyebrow: "nullbreach / appsec assistant",
+      hero: "Understand risk before it reaches production.",
+      lead: "NullBreach combines code analysis and AI conversation to turn security questions into clear, prioritized, actionable decisions.",
+      start: "Open the product",
+      docs: "View API documentation",
+      nav: ["Features", "Flow", "Principles", "Author", "Contact"],
+      langLink: "ES",
+      intro: "A tool for thinking about security while you build.",
+      introText:
+        "Paste code, ask a question, and get guidance to identify attack surfaces, classify impact, and plan a remediation. It is designed for developers and teams who need context, not just an alert.",
+      capabilities: [
+        [
+          "Focused chat",
+          "Discuss vulnerabilities, mitigations, controls, and secure architecture decisions.",
+        ],
+        [
+          "Code analysis",
+          "Send code to review risk signals and receive an impact- and remediation-oriented explanation.",
+        ],
+        [
+          "OWASP context",
+          "Connect findings to OWASP categories, severity, and verifiable hardening steps.",
+        ],
+      ],
+      flowTitle: "From a question to the next step.",
+      flow: [
+        [
+          "01",
+          "Create an account",
+          "Register and sign in to keep your work history separated.",
+        ],
+        [
+          "02",
+          "Ask or analyze",
+          "Open the chat or paste code to investigate a hypothesis.",
+        ],
+        [
+          "03",
+          "Prioritize and fix",
+          "Use severity, impact, and remediation context to decide what to address first.",
+        ],
+      ],
+      principles: "Built for a clearer AppSec practice.",
+      principleItems: [
+        [
+          "Open source",
+          "The repository is MIT licensed: you can study, copy, modify, and deploy it while honoring the license.",
+        ],
+        [
+          "Server-side secrets",
+          "Database, session, and AI-provider credentials never reach the browser.",
+        ],
+        [
+          "Explicit limits",
+          "AI provides technical guidance. It does not replace professional review, a pentest, or a dedicated scanner.",
+        ],
+        [
+          "Verifiable delivery",
+          "Tests, static review, dependency auditing, and secret detection protect every promotion.",
+        ],
+      ],
+      faqTitle: "Frequently asked questions.",
+      faq: [
+        [
+          "Does NullBreach replace SAST or an audit?",
+          "No. It complements security work with contextual analysis and explanation; retain specialist review for critical risks.",
+        ],
+        [
+          "What happens to code I send?",
+          "Analysis is processed server-side. Review the documentation and repository configuration before using sensitive data.",
+        ],
+        [
+          "Can I reuse the project?",
+          "Yes. NullBreach is MIT licensed. Read LICENSE and CONTRIBUTING.md before distributing changes.",
+        ],
+      ],
+      authorLabel: "Project author",
+      authorTitle: "Valentina Ramírez",
+      authorText:
+        "Colombian Full Stack Developer, founder of Lúmina W, focused on backend engineering, AppSec, and independent products. She builds NullBreach as an open portfolio for exploring secure development with AI.",
+      authorLink: "Visit her portfolio",
+      contactTitle: "Your next idea deserves code that can support it.",
+      contactText:
+        "I design and build complete products, from backend systems to interfaces people use. With AI integrated and security built in from the start.",
+      contactMeta:
+        "Projects from COP 2,000,000 / USD 500 depending on scope. MVPs from 3 to 6 weeks. Limited availability, with a typical response within 24 hours.",
+      contactAction: "Contact Valentina",
+      footer: "An AI cybersecurity assistant built in Colombia.",
+      updated: "Last updated: October 2026",
+    };
+
+const alternate = es ? `${productUrl}/en` : productUrl;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "NullBreach",
+  applicationCategory: "SecurityApplication",
+  operatingSystem: "Web",
+  isAccessibleForFree: true,
+  license: "https://opensource.org/license/mit",
+  url: `${productUrl}${es ? "" : "/en"}`,
+  author: {
+    "@type": "Person",
+    name: "Valentina Ramírez",
+    url: "https://www.wavival.dev",
+  },
+  description: copy.description,
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={copy.description} />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <link rel="canonical" href={`${productUrl}${es ? "" : "/en"}`} />
+    <link rel="alternate" hreflang={es ? "en" : "es"} href={alternate} />
+    <link rel="alternate" hreflang="x-default" href={productUrl} />
+    <link rel="icon" type="image/svg+xml" href={`${basePath}favicon.svg`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={copy.title} />
+    <meta property="og:description" content={copy.description} />
+    <meta property="og:url" content={`${productUrl}${es ? "" : "/en"}`} />
+    <meta
+      property="og:image"
+      content="https://www.wavival.dev/nullbreach/images/og-nullbreach.webp"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={copy.title} />
+    <meta name="twitter:description" content={copy.description} />
+    <title>{copy.title}</title>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(schema)}
+    ></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">
+      {es ? "Saltar al contenido" : "Skip to content"}
+    </a>
+    <header class="site-header">
+      <a class="brand" href={`${base}`} aria-label="NullBreach home">
+        [nullbreach]
+      </a>
+      <nav aria-label={es ? "Navegación principal" : "Primary navigation"}>
+        {copy.nav.map((item, index) => (
+          <a
+            href={`#${["features", "flow", "principles", "author", "contact"][index]}`}
+          >
+            {item}
+          </a>
+        ))}
+      </nav>
+      <a class="language" href={es ? `${basePath}en/` : base}>
+        {copy.langLink}
+      </a>
+    </header>
+    <main id="content">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">{copy.eyebrow}</p>
+          <h1 id="hero-title">{copy.hero}</h1>
+          <p class="lead">{copy.lead}</p>
+          <div class="actions">
+            <a class="button primary" href={`${productUrl}/login`}>
+              {copy.start}
+            </a>
+            <a class="button secondary" href={`${productUrl}/swagger`}>
+              {copy.docs}
+            </a>
+          </div>
+        </div>
+        <div
+          class="terminal"
+          aria-label={
+            es
+              ? "Resumen de análisis de seguridad"
+              : "Security analysis summary"
+          }
+        >
+          <div class="terminal-top">
+            <span></span>
+            <span></span>
+            <span></span>
+            <code>findings.log</code>
+          </div>
+          <code>
+            <span class="muted">$</span> nullbreach scan ./src
+          </code>
+          <p>
+            <b class="critical">CRIT</b>{" "}
+            <span>Injection risk in auth flow</span>
+          </p>
+          <p>
+            <b class="high">HIGH</b> <span>Missing rate limit boundary</span>
+          </p>
+          <p>
+            <b class="medium">MED</b> <span>Verbose error response</span>
+          </p>
+          <div class="progress">
+            <i></i>
+          </div>
+          <small>
+            {es
+              ? "Analiza, prioriza y actúa con contexto."
+              : "Analyze, prioritize, and act with context."}
+          </small>
+        </div>
+      </section>
+
+      <section id="features" class="section" aria-labelledby="features-title">
+        <p class="section-number">01 / {es ? "capacidades" : "capabilities"}</p>
+        <h2 id="features-title">{copy.intro}</h2>
+        <p class="section-lead">{copy.introText}</p>
+        <div class="cards">
+          {copy.capabilities.map(([title, text]) => (
+            <article>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section
+        id="flow"
+        class="section section-dark"
+        aria-labelledby="flow-title"
+      >
+        <p class="section-number">02 / {es ? "flujo" : "flow"}</p>
+        <h2 id="flow-title">{copy.flowTitle}</h2>
+        <ol class="steps">
+          {copy.flow.map(([number, title, text]) => (
+            <li>
+              <span>{number}</span>
+              <div>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section
+        id="principles"
+        class="section"
+        aria-labelledby="principles-title"
+      >
+        <p class="section-number">03 / {es ? "principios" : "principles"}</p>
+        <h2 id="principles-title">{copy.principles}</h2>
+        <div class="principles">
+          {copy.principleItems.map(([title, text]) => (
+            <article>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="section faq" aria-labelledby="faq-title">
+        <p class="section-number">04 / FAQ</p>
+        <h2 id="faq-title">{copy.faqTitle}</h2>
+        {copy.faq.map(([question, answer]) => (
+          <details>
+            <summary>{question}</summary>
+            <p>{answer}</p>
+          </details>
+        ))}
+      </section>
+
+      <section
+        id="author"
+        class="section author"
+        aria-labelledby="author-title"
+      >
+        <img
+          src={`${basePath}profile.webp`}
+          width="256"
+          height="256"
+          loading="lazy"
+          decoding="async"
+          alt={
+            es
+              ? "Retrato de Valentina Ramírez"
+              : "Portrait of Valentina Ramírez"
+          }
+        />
+        <div>
+          <p class="section-number">05 / {copy.authorLabel}</p>
+          <h2 id="author-title">{copy.authorTitle}</h2>
+          <p class="section-lead">{copy.authorText}</p>
+          <a class="text-link" href="https://www.wavival.dev">
+            {copy.authorLink} <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <section id="contact" class="contact" aria-labelledby="contact-title">
+        <p class="eyebrow">{es ? "a un click" : "one click away"}</p>
+        <h2 id="contact-title">{copy.contactTitle}</h2>
+        <p>{copy.contactText}</p>
+        <p class="contact-meta">{copy.contactMeta}</p>
+        <a class="button primary" href="mailto:wavival.dev@luminaw.co">
+          {copy.contactAction}
+        </a>
+      </section>
+    </main>
+    <footer>
+      <p>
+        <strong>[nullbreach]</strong> {copy.footer}
+      </p>
+      <div>
+        <a href="https://github.com/wavival/nullbreach">GitHub</a>
+        <a href={`${productUrl}/api/openapi`}>API</a>
+        <a href={`${productUrl}/login`}>{es ? "Iniciar sesión" : "Sign in"}</a>
+      </div>
+      <small>{copy.updated} · MIT · © 2026 Valentina Ramírez</small>
+    </footer>
+  </body>
+</html>
