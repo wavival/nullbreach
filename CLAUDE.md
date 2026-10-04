@@ -1,11 +1,13 @@
 # NullBreach Engineering Guide
 
+**Last updated:** October 4, 2026
+
 ## Product and architecture
 
-NullBreach is a single Next.js App Router application organized into three internal product areas: `features/landing/` for the public landing, `app/` and `components/` for the frontend, and `app/api/`, `lib/`, and `prisma/` for the backend boundary. The repository root contains the only deployable application.
+NullBreach is a monorepo with an Astro landing in `apps/landing/` and a Next.js App Router product at the repository root. The landing is static and indexable; the product owns authenticated UI and APIs.
 
 - UI and routes: `app/` and `components/`.
-- Public landing: `features/landing/`, including its bilingual SEO-facing content.
+- Public landing: `apps/landing/`, including bilingual SEO-facing content, sitemap, robots directives, and structured data.
 - Authentication: NextAuth Credentials and optional Google OAuth with JWT sessions in HTTP-only cookies.
 - Data: Prisma ORM with separate Vercel Marketplace Prisma Postgres resources for production (`prisma-postgres-amber-crystal`) and staging (`nullbreach-stg-postgres`), with the schema in `prisma/schema.prisma`.
 - AI: the OpenAI SDK is used only by server-side modules and route handlers.
@@ -14,7 +16,7 @@ NullBreach is a single Next.js App Router application organized into three inter
 - API contract: `docs/api.md`.
 - Design decisions: `DESIGN.md`.
 
-Do not reintroduce Django, Vite, Astro, client-side AI keys, or browser-managed authentication tokens.
+Do not reintroduce client-side AI keys or browser-managed authentication tokens. Keep the landing fully Astro and static.
 
 ## Runtime and commands
 
@@ -25,6 +27,7 @@ npm ci
 npm run prepare
 npm run verify
 npm run test:e2e
+npm run landing:dev
 ```
 
 Use `npm run db:migrate:deploy` for committed migrations. Create schema changes with a new Prisma migration and never edit a migration already applied to a shared environment.
@@ -32,7 +35,7 @@ Use `npm run db:migrate:deploy` for committed migrations. Create schema changes 
 ## Conventions
 
 - Work branches: `feature/*`, `fix/*`, or `chore/*`.
-- Commits: `type(scope): message`, per `@lumina-w/dev-standards/commitlint` (`commitlint.config.cjs` extends it, cloned at tag `v0.6.0` via `dev-standards-ref` in `commit-lint.yml`/`pr-title.yml` with the `DEV_STANDARDS_DEPLOY_KEY` deploy-key secret).
+- Commits: `type(scope): message`, enforced locally by `commitlint.config.cjs` and reusable GitHub workflows.
 - Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 - Allowed scopes: `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`, `seo`, `a11y`, `billing`.
 - Commit headers and generated documentation must not contain em dashes (a local `no-em-dash` commitlint rule layered on top of the shared config).
@@ -58,9 +61,9 @@ Only two deployable environments are used:
 
 Automatic Git deployments are disabled in `vercel.json`. GitHub Actions performs all builds, migrations, deployments, health checks, and deployed E2E tests. Do not deploy `dev`, feature branches, Dependabot branches, or previews from branches other than `stg`.
 
-The Vercel project is a child microfrontend of `wavival-dev`. Its public base path is `/nullbreach`; keep `microfrontends.json`, `lib/paths.ts`, Next.js rewrites, NextAuth `basePath`, browser links, and API requests synchronized. The default application repository owns the production routing source of truth.
+The Next.js product is a child microfrontend of `wavival-dev` at `/nullbreach/:path*`. The Astro landing owns `/nullbreach`, `/nullbreach/en`, and its crawl assets. Keep the parent routing contract, `lib/paths.ts`, Next.js rewrites, NextAuth configuration, browser links, and API requests synchronized.
 
-Public indexing is limited to the Spanish and English landing routes. `app/sitemap.ts` lists those URLs and `app/robots.ts` excludes API, authentication, and protected workspace paths. Do not add authenticated routes to the sitemap.
+Public indexing is limited to the Astro Spanish and English landing routes. The Next.js product is noindex and must not add authenticated routes to a sitemap.
 
 ## Secrets and data
 

@@ -1,8 +1,10 @@
 # NullBreach Design
 
+**Last updated:** October 4, 2026
+
 ## Goals
 
-NullBreach provides a focused AppSec workspace where authenticated users can ask secure-development questions, analyze code, and review recent chat history. The design prioritizes a small operational surface, server-side secret handling, and a gated delivery path.
+NullBreach provides a focused AppSec workspace where authenticated users can ask secure-development questions, analyze code, and review recent chat history. Its public Astro landing explains the product, its limits, and its open-source model. The design prioritizes a small operational surface, server-side secret handling, clear editorial hierarchy, and a gated delivery path.
 
 ## System context
 
@@ -10,7 +12,7 @@ The browser communicates only with the Next.js application. Route handlers call 
 
 ```text
 Browser
-  -> Public landing (`features/landing/`)
+  -> Public Astro landing (`apps/landing/`)
   -> Next.js frontend (`app/`, `components/`)
   -> Next.js backend (`app/api/`, `lib/`, `prisma/`)
      -> NextAuth session validation
@@ -21,13 +23,20 @@ Browser
 
 ## Product boundaries
 
-The repository is intentionally monorepo-ready but deploys as one Next.js application:
+The repository contains two deployable surfaces:
 
-- Landing: public, bilingual, indexable, lightweight, and independent from authenticated state.
+- Landing: `apps/landing/`, public, bilingual, static, indexable, and independent from authenticated state.
 - Frontend: authentication screens and the protected chat and analysis workspace.
 - Backend: route handlers, authentication callbacks, validation, provider clients, persistence, and migrations.
 
-The boundaries are folders and runtime responsibilities, not separate packages. A future extraction into workspace packages must preserve the `/nullbreach` public base path and the same environment separation.
+The parent microfrontend routes the exact landing paths to Astro and nested product paths to Next.js. Both surfaces preserve the `/nullbreach` public base path.
+
+## Brand identity
+
+- Tone: direct, calm, technical, and useful. Explain risk without fear-based copy.
+- Visual system: dark navy surfaces, cyan accents, monospace details, strong spacing, and accessible contrast.
+- Landing: one clear `h1`, structured sections, visible focus states, reduced-motion support, semantic landmarks, canonical URLs, Open Graph metadata, and JSON-LD.
+- Author presence: use the portfolio portrait of Valentina Ramírez with descriptive alternative text and link to `wavival.dev`.
 
 ## Runtime boundaries
 

@@ -1,5 +1,5 @@
-import { Landing } from "@/features/landing";
+import { redirect } from "next/navigation";
 
 export default function EnglishHomePage() {
-  return <Landing lang="en" />;
+  redirect("/nullbreach/login");
 }
