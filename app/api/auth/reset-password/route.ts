@@ -12,21 +12,32 @@ export async function POST(request: Request) {
       { error: "Invalid token or password." },
       { status: 400 },
     );
-  const resetToken = await consumePasswordResetToken(token);
-  if (!resetToken)
+  try {
+    const resetToken = await consumePasswordResetToken(token);
+    if (!resetToken)
+      return NextResponse.json(
+        { error: "This reset link is invalid or expired." },
+        { status: 400 },
+      );
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: resetToken.user_id },
+        data: { password_hash: await hashPassword(password) },
+      }),
+      prisma.passwordResetToken.update({
+        where: { id: resetToken.id },
+        data: { used_at: new Date() },
+      }),
+    ]);
+    return NextResponse.json({ message: "Password updated." });
+  } catch (error) {
+    console.error("Password reset failed", error);
     return NextResponse.json(
-      { error: "This reset link is invalid or expired." },
-      { status: 400 },
+      {
+        error:
+          "Password reset is unavailable until the database is configured.",
+      },
+      { status: 503 },
     );
-  await prisma.$transaction([
-    prisma.user.update({
-      where: { id: resetToken.user_id },
-      data: { password_hash: await hashPassword(password) },
-    }),
-    prisma.passwordResetToken.update({
-      where: { id: resetToken.id },
-      data: { used_at: new Date() },
-    }),
-  ]);
-  return NextResponse.json({ message: "Password updated." });
+  }
 }

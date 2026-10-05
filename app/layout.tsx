@@ -11,47 +11,10 @@ export const metadata: Metadata = {
     template: "%s | NullBreach",
   },
   description:
-    "NullBreach helps developers find, understand, and remediate application security vulnerabilities with AI-assisted chat and code analysis.",
+    "Authenticated NullBreach product workspace for AI-assisted AppSec chat and code analysis.",
   applicationName: "NullBreach",
-  keywords: [
-    "AppSec",
-    "application security",
-    "OWASP",
-    "SAST",
-    "code analysis",
-  ],
-  alternates: {
-    canonical: "/nullbreach",
-    languages: {
-      es: "/nullbreach",
-      en: "/nullbreach/en",
-    },
-  },
-  openGraph: {
-    type: "website",
-    siteName: "NullBreach",
-    title: "NullBreach | AI AppSec assistant",
-    description:
-      "Find and understand application security vulnerabilities before attackers do.",
-    url: "https://www.wavival.dev/nullbreach",
-    locale: "es_CO",
-    alternateLocale: ["en_US"],
-    images: [
-      {
-        url: "/nullbreach/images/og-nullbreach.webp",
-        width: 1200,
-        height: 630,
-        alt: "NullBreach: análisis de código con IA basado en OWASP y chat de seguridad",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "NullBreach | AI AppSec assistant",
-    description:
-      "Find and understand application security vulnerabilities before attackers do.",
-    images: ["/nullbreach/images/og-nullbreach.webp"],
-  },
+  keywords: ["AppSec", "application security", "OWASP", "code analysis"],
+  robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

@@ -1,0 +1,596 @@
+---
+interface Props {
+  lang?: "es" | "en";
+}
+
+const { lang = "es" } = Astro.props;
+const es = lang === "es";
+const base = import.meta.env.BASE_URL;
+const basePath = base.endsWith("/") ? base : `${base}/`;
+const productUrl = "https://www.wavival.dev/nullbreach";
+const docsUrl = "https://github.com/wavival/nullbreach/blob/dev/docs/api.md";
+const copy = es
+  ? {
+      title: "NullBreach | Asistente de ciberseguridad con IA",
+      description:
+        "Asistente de ciberseguridad para analizar código, explorar vulnerabilidades y aplicar prácticas de desarrollo seguro con contexto OWASP.",
+      features: "caracteristicas",
+      how: "como-funciona",
+      home: "inicio",
+      signIn: "iniciar sesión",
+      seeFeatures: "ver características",
+      tagline: "Asistente de ciberseguridad con IA",
+      portraitText:
+        "Desarrolladora full-stack y autora de NullBreach: aplicación en Next.js, Prisma y OpenAI.",
+      hero: "Encuentra y entiende vulnerabilidades antes que los atacantes.",
+      intro:
+        "NullBreach combina chat con IA y análisis estático de código para razonar sobre OWASP, modelado de amenazas y endurecimiento, en lenguaje claro.",
+      toolsTitle: "Seguridad ofensiva y defensiva, en un solo lugar",
+      toolsBody: "Herramientas para desarrolladores y equipos de seguridad.",
+      howTitle: "De la duda al hallazgo en tres pasos",
+      ready: "¿Listo para fortalecer tu código?",
+      readyBody: "Inicia sesión y empieza tu primer análisis.",
+      product: "Producto",
+      resources: "Recursos",
+      repository: "Repositorio",
+      portfolio: "Portafolio",
+      apiDocs: "Documentación API",
+      allRights: "Todos los derechos reservados.",
+      language: "idioma",
+      project: "proyecto",
+      scanning: "escaneando…",
+      history: "historial",
+      tools: "herramientas",
+      technical: "Bajo el capó: moderno y desacoplado",
+      techItems: [
+        "Análisis estático que combina detección determinista con razonamiento del modelo.",
+        "Historial de conversación persistente por usuario.",
+        "Hallazgos con severidad y guía de remediación.",
+      ],
+      stack: "stack.json",
+      footer: "Asistente de ciberseguridad con IA.",
+    }
+  : {
+      title: "NullBreach | AI cybersecurity assistant",
+      description:
+        "Cybersecurity assistant for code analysis, vulnerability exploration, and secure development guidance with OWASP context.",
+      features: "features",
+      how: "how-it-works",
+      home: "top",
+      signIn: "sign in",
+      seeFeatures: "see features",
+      tagline: "AI-powered cybersecurity assistant",
+      portraitText:
+        "Full-stack developer and author of NullBreach: a Next.js, Prisma, and OpenAI application.",
+      hero: "Find and understand vulnerabilities before attackers do.",
+      intro:
+        "NullBreach pairs an AI chat with static code analysis to reason about OWASP, threat modeling, and hardening in plain language.",
+      toolsTitle: "Offensive and defensive security, in one place",
+      toolsBody: "Tools for developers and security teams.",
+      howTitle: "From question to finding in three steps",
+      ready: "Ready to harden your code?",
+      readyBody: "Sign in and run your first analysis.",
+      product: "Product",
+      resources: "Resources",
+      repository: "Repository",
+      portfolio: "Portfolio",
+      apiDocs: "API documentation",
+      allRights: "All rights reserved.",
+      language: "language",
+      project: "project",
+      scanning: "scanning…",
+      history: "history",
+      tools: "tools",
+      technical: "Under the hood: modern and decoupled",
+      techItems: [
+        "Static analysis combining deterministic detection with model reasoning.",
+        "Per-user persistent conversation history.",
+        "Findings with severity and remediation guidance.",
+      ],
+      stack: "stack.json",
+      footer: "AI-powered cybersecurity assistant.",
+    };
+
+const features = es
+  ? [
+      [
+        "chat",
+        "Chat de ciberseguridad",
+        "Conversa sobre vulnerabilidades, vectores de ataque y mitigaciones con contexto accionable.",
+      ],
+      [
+        "analyze",
+        "Analizador de código",
+        "Envía código fuente y recibe hallazgos de análisis estático clasificados por severidad.",
+      ],
+      [
+        "owasp",
+        "OWASP y amenazas",
+        "Relaciona riesgos con OWASP Top 10, superficies de ataque y límites de confianza.",
+      ],
+    ]
+  : [
+      [
+        "chat",
+        "Cybersecurity chat",
+        "Discuss vulnerabilities, attack vectors, and mitigations with actionable context.",
+      ],
+      [
+        "analyze",
+        "Code analyzer",
+        "Submit source code and get static-analysis findings ranked by severity.",
+      ],
+      [
+        "owasp",
+        "OWASP and threats",
+        "Connect risks to OWASP Top 10, attack surfaces, and trust boundaries.",
+      ],
+    ];
+const steps = es
+  ? [
+      [
+        "auth login",
+        "Crea tu cuenta",
+        "Regístrate e inicia sesión para mantener separado tu historial.",
+      ],
+      [
+        "scan ./src",
+        "Pregunta o analiza",
+        "Abre un chat o envía código al analizador para obtener un diagnóstico.",
+      ],
+      [
+        "patch --apply",
+        "Actúa sobre los hallazgos",
+        "Prioriza por severidad y aplica las mitigaciones sugeridas.",
+      ],
+    ]
+  : [
+      [
+        "auth login",
+        "Create your account",
+        "Register and sign in to keep your history separate.",
+      ],
+      [
+        "scan ./src",
+        "Ask or analyze",
+        "Open a chat or send code to the analyzer for a diagnosis.",
+      ],
+      [
+        "patch --apply",
+        "Act on findings",
+        "Prioritize by severity and apply the suggested mitigations.",
+      ],
+    ];
+const alternate = es ? `${productUrl}/en` : productUrl;
+const pageUrl = `${productUrl}${es ? "" : "/en"}`;
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": `${productUrl}#software`,
+    name: "NullBreach",
+    applicationCategory: "SecurityApplication",
+    operatingSystem: "Web",
+    isAccessibleForFree: true,
+    license: "https://opensource.org/license/mit",
+    url: productUrl,
+    description: copy.description,
+    inLanguage: lang,
+    featureList: [
+      "AI-assisted AppSec chat",
+      "Static code analysis",
+      "OWASP-aligned security guidance",
+    ],
+    author: {
+      "@type": "Person",
+      name: "Valentina Ramírez",
+      url: "https://www.wavival.dev",
+      sameAs: ["https://instagram.com/wavival"],
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${productUrl}#website`,
+    name: "NullBreach",
+    url: productUrl,
+    inLanguage: ["es", "en"],
+  },
+];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={copy.description} />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <link rel="canonical" href={pageUrl} />
+    <link rel="alternate" hreflang={es ? "en" : "es"} href={alternate} />
+    <link rel="alternate" hreflang="x-default" href={productUrl} />
+    <link rel="icon" type="image/svg+xml" href={`${basePath}favicon.svg`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NullBreach" />
+    <meta property="og:locale" content={es ? "es_CO" : "en_US"} />
+    <meta property="og:locale:alternate" content={es ? "en_US" : "es_CO"} />
+    <meta property="og:title" content={copy.title} />
+    <meta property="og:description" content={copy.description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta
+      property="og:image"
+      content="https://www.wavival.dev/nullbreach/images/og-nullbreach.webp"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="NullBreach AppSec workspace" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={copy.title} />
+    <meta name="twitter:description" content={copy.description} />
+    <meta
+      name="twitter:image"
+      content="https://www.wavival.dev/nullbreach/images/og-nullbreach.webp"
+    />
+    <title>{copy.title}</title>
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(schema)}
+    ></script>
+  </head>
+  <body>
+    <div class="page-loader" aria-hidden="true">
+      <span class="brand">
+        <span>[</span>
+        <span class="brand-null">null</span>
+        <span class="brand-breach">breach</span>
+        <span>]</span>
+      </span>
+    </div>
+    <a class="skip-link" href="#main">
+      {es ? "Saltar al contenido" : "Skip to content"}
+    </a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href={`#${copy.home}`} aria-label="NullBreach">
+          <span aria-hidden="true">[</span>
+          <span class="brand-null">null</span>
+          <span class="brand-breach">breach</span>
+          <span aria-hidden="true">]</span>
+        </a>
+        <nav aria-label={es ? "Navegación principal" : "Main navigation"}>
+          <a href={`#${copy.features}`}>~/{copy.features}</a>
+          <a href={`#${copy.how}`}>~/{copy.how}</a>
+          <a
+            href="https://github.com/wavival/nullbreach"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ~/{copy.project}
+          </a>
+        </nav>
+        <div class="header-actions">
+          <div class="language" role="group" aria-label="Language / Idioma">
+            <a href={base} lang="es" aria-current={es ? "page" : undefined}>
+              es
+            </a>
+            <a
+              href={`${basePath}en/`}
+              lang="en"
+              aria-current={!es ? "page" : undefined}
+            >
+              en
+            </a>
+          </div>
+          <a class="button primary desktop-login" href={`${productUrl}/login`}>
+            <span aria-hidden="true">~/</span>
+            {copy.signIn}
+          </a>
+          <details class="mobile-menu">
+            <summary aria-label={es ? "Abrir menú" : "Open menu"}>
+              <span aria-hidden="true">☰</span>
+            </summary>
+            <div class="mobile-menu-panel">
+              <a href={`#${copy.features}`}>~/{copy.features}</a>
+              <a href={`#${copy.how}`}>~/{copy.how}</a>
+              <a
+                href="https://github.com/wavival/nullbreach"
+                target="_blank"
+                rel="noreferrer"
+              >
+                ~/{copy.project}
+              </a>
+              <a class="button primary" href={`${productUrl}/login`}>
+                <span aria-hidden="true">~/</span>
+                {copy.signIn}
+              </a>
+            </div>
+          </details>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section id={copy.home} class="hero scanlines">
+        <div class="hero-panel window">
+          <div class="window-bar">
+            <i></i>
+            <i></i>
+            <i></i>
+            <code>nullbreach / scan</code>
+          </div>
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <p class="command">
+                <span>root@nullbreach</span>:<b>~</b>$ scan --target{" "}
+                <strong>./src</strong>
+              </p>
+              <span class="eyebrow">✦ {copy.tagline}</span>
+              <h1>
+                <span>&gt;</span> <span class="caret">{copy.hero}</span>
+              </h1>
+              <p class="intro">
+                <b># </b>
+                {copy.intro}
+              </p>
+              <div class="actions">
+                <a class="button primary" href={`${productUrl}/login`}>
+                  <span aria-hidden="true">~/</span>
+                  {copy.signIn}
+                </a>
+                <a class="button ghost" href={`#${copy.features}`}>
+                  <span aria-hidden="true">~/</span>
+                  {copy.seeFeatures}
+                </a>
+              </div>
+            </div>
+            <div
+              class="findings"
+              aria-label={es ? "Resumen de hallazgos" : "Findings summary"}
+            >
+              <div class="findings-head">
+                <strong>findings.log</strong>
+                <span>
+                  <i></i> live
+                </span>
+              </div>
+              <div class="severity">
+                <b class="critical">● CRIT 3</b>
+                <b class="high">● HIGH 7</b>
+                <b class="medium">● MED 12</b>
+                <b class="low">● LOW 21</b>
+              </div>
+              <ul>
+                <li>
+                  <i class="critical">●</i>
+                  <b>SQL injection</b>
+                  <small>api/users.ts:42</small>
+                </li>
+                <li>
+                  <i class="high">●</i>
+                  <b>XSS</b>
+                  <small>render.tsx:88</small>
+                </li>
+                <li>
+                  <i class="medium">●</i>
+                  <b>weak JWT alg</b>
+                  <small>auth.ts:13</small>
+                </li>
+              </ul>
+              <div class="scan-progress">
+                <div>
+                  <i></i>
+                </div>
+                <small>▒▒▒▒▒▒▒▒▒▒ {copy.scanning} 72%</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id={copy.features} class="section features">
+        <div class="section-heading">
+          <span class="label">$ ls ./{copy.tools}</span>
+          <h2>{copy.toolsTitle}</h2>
+          <p># {copy.toolsBody}</p>
+        </div>
+        <div class="feature-grid">
+          {features.map(([key, title, text]) => (
+            <article class="feature-card window">
+              <div class="window-bar">
+                <i></i>
+                <i></i>
+                <i></i>
+                <code>nullbreach {key}</code>
+              </div>
+              <div class="card-content">
+                <span class="feature-icon" aria-hidden="true">
+                  {key === "chat" ? "▢" : key === "analyze" ? "⌗" : "⌘"}
+                </span>
+                <h3>
+                  <b>&gt;</b> {title}
+                </h3>
+                <p>{text}</p>
+              </div>
+            </article>
+          ))}
+          <article class="stack window">
+            <div class="window-bar">
+              <i></i>
+              <i></i>
+              <i></i>
+              <code>{copy.stack}</code>
+            </div>
+            <pre><span>$ cat stack.json</span>{`\n{\n  `}<b>"backend"</b>: <em>"Prisma · PostgreSQL"</em>,{`\n  `}<b>"frontend"</b>: <em>"Next.js · TypeScript"</em>,{`\n  `}<b>"ai"</b>: <em>"OpenAI API"</em>,{`\n  `}<b>"auth"</b>: <em>"JWT stateless"</em>{`\n}`}</pre>
+          </article>
+          <article class="technical-card">
+            <span class="label">$ info --technical</span>
+            <h2>{copy.technical}</h2>
+            <ul>
+              {copy.techItems.map((item) => (
+                <li>
+                  <b>&gt;</b> {item}
+                </li>
+              ))}
+            </ul>
+            <div class="tags">
+              <span>● SQL injection</span>
+              <span>● XSS</span>
+              <span>● hardcoded secrets</span>
+              <span>● insecure error handling</span>
+            </div>
+          </article>
+          <dl class="metrics">
+            <div>
+              <dt>OWASP</dt>
+              <dd>{es ? "Top 10 cubierto" : "Top 10 coverage"}</dd>
+            </div>
+            <div>
+              <dt>IA</dt>
+              <dd>{es ? "Chat especializado" : "Specialized chat"}</dd>
+            </div>
+            <div>
+              <dt>SAST</dt>
+              <dd>{es ? "Análisis de código" : "Code analysis"}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section id={copy.how} class="section how scanlines">
+        <div class="section-inner">
+          <span class="label">$ {copy.history} --steps</span>
+          <h2>{copy.howTitle}</h2>
+          <ol class="steps">
+            {steps.map(([command, title, text], index) => (
+              <li>
+                <div class="step-number">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <p>
+                  <b>$</b> nullbreach {command}
+                </p>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section class="section call-to-action">
+        <div class="window">
+          <div class="window-bar">
+            <i></i>
+            <i></i>
+            <i></i>
+            <code>~/nullbreach</code>
+          </div>
+          <div class="cta-content">
+            <p class="command">
+              <span>root@nullbreach</span>:~$ init
+            </p>
+            <h2>
+              <b>&gt;</b> {copy.ready}
+            </h2>
+            <p>{copy.readyBody}</p>
+            <div class="cta-actions">
+              <a class="button primary" href={`${productUrl}/login`}>
+                <span aria-hidden="true">~/</span>
+                {copy.signIn}
+              </a>
+              <a class="button ghost" href={docsUrl}>
+                <span aria-hidden="true">~/</span>
+                {copy.apiDocs}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="creator-section"
+        aria-label={es ? "Sobre NullBreach" : "About NullBreach"}
+      >
+        <div class="creator-card">
+          <img
+            src={`${basePath}profile.webp`}
+            width="128"
+            height="128"
+            loading="lazy"
+            decoding="async"
+            alt={
+              es
+                ? "Valentina Ramírez, autora de NullBreach"
+                : "Valentina Ramírez, author of NullBreach"
+            }
+          />
+          <div>
+            <span class="label">$ whoami</span>
+            <h2>Valentina Ramírez</h2>
+            <a href="https://www.wavival.dev" target="_blank" rel="noreferrer">
+              @wavival
+            </a>
+            <p>{copy.portraitText}</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-main">
+        <div>
+          <a class="brand" href={`#${copy.home}`}>
+            <span aria-hidden="true">[</span>
+            <span class="brand-null">null</span>
+            <span class="brand-breach">breach</span>
+            <span aria-hidden="true">]</span>
+          </a>
+          <p># {copy.footer}</p>
+        </div>
+        <nav aria-label={es ? "Enlaces del producto" : "Product links"}>
+          <h2>{copy.product}</h2>
+          <a href={`#${copy.features}`}>~/{copy.features}</a>
+          <a href={`#${copy.how}`}>~/{copy.how}</a>
+          <a href={`${productUrl}/login`}>~/login</a>
+        </nav>
+        <nav aria-label={es ? "Recursos" : "Resources"}>
+          <h2>{copy.resources}</h2>
+          <a
+            href="https://github.com/wavival/nullbreach"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ~/{copy.repository.toLowerCase()}
+          </a>
+          <a href={docsUrl}>~/api-docs</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <small>
+          MIT · © {new Date().getFullYear()} NullBreach · Valentina Ramírez
+        </small>
+        <nav
+          aria-label={
+            es ? "Perfiles de Valentina Ramírez" : "Valentina Ramírez profiles"
+          }
+        >
+          <a
+            href="https://instagram.com/wavival"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ~/instagram
+          </a>
+          <a href="https://www.wavival.dev" target="_blank" rel="noreferrer">
+            ~/{copy.portfolio.toLowerCase()}
+          </a>
+        </nav>
+      </div>
+    </footer>
+    <script>
+      window.setTimeout(() => {
+        document.querySelector(".page-loader")?.classList.add("is-hidden");
+      }, 1000);
+    </script>
+  </body>
+</html>

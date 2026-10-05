@@ -1,21 +1,13 @@
-name: Auto-merge feature PRs to dev
+name: Auto-merge into dev
 
+# Thin caller. Logic in lumina-w/agents (automerge-dev.yml).
 on:
-  pull_request_target:
-    branches: [dev]
-    types: [opened, reopened, synchronize]
+  pull_request:
+    types: [opened, reopened, ready_for_review]
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 jobs:
-  enable-auto-merge:
-    if: "startsWith(github.event.pull_request.head.ref, 'feature/') || startsWith(github.event.pull_request.head.ref, 'fix/') || startsWith(github.event.pull_request.head.ref, 'chore/')"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: peter-evans/enable-pull-request-automerge@v3
-        with:
-          token: ${{ secrets.PROMOTE_TOKEN }}
-          pull-request-number: ${{ github.event.pull_request.number }}
-          merge-method: squash
+  enable:
+    uses: lumina-w/agents/.github/workflows/automerge-dev.yml@v4
+    secrets: inherit

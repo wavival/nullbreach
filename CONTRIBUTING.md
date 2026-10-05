@@ -1,5 +1,7 @@
 # Contributing to NullBreach
 
+**Last updated:** October 4, 2026
+
 Thank you for contributing. This process keeps changes secure, traceable, and deployable.
 
 ## Prerequisites
@@ -19,6 +21,7 @@ npm ci
 npm run prepare
 cp .env.example .env.local
 npm run db:migrate:deploy
+npm run landing:check
 ```
 
 Replace the safe placeholders in `.env.local` with local-only credentials. Never commit that file.
@@ -40,14 +43,16 @@ Valid prefixes are `feature`, `fix`, and `chore`. Dependabot branches are accept
 Use strict Conventional Commits:
 
 ```text
-feature(auth): add registration validation
+feat(auth): add registration validation
 fix(api): reject oversized chat questions
 chore(docs): document the health endpoint
 ```
 
-Allowed types are `feat`, `fix`, and `chore`.
+Enforced by `commitlint.config.cjs` and reusable GitHub workflows.
 
-Allowed scopes are `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, and `core`.
+Allowed types are `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, and `revert`.
+
+Allowed scopes are `api`, `ui`, `db`, `auth`, `ci`, `deploy`, `docs`, `config`, `tests`, `security`, `deps`, `core`, `seo`, `a11y`, and `billing`.
 
 Do not use em dashes in commit headers or generated documentation. Local hooks and CI enforce branch names, commit format, and common secret patterns.
 
@@ -58,7 +63,7 @@ Run the complete local gate before opening a pull request:
 ```bash
 npm run verify
 npm run test:e2e
-npm audit --audit-level=high
+npm audit --audit-level=critical
 ```
 
 Review the full diff for accidental credentials, generated files, dead code, stale documentation, and unrelated changes.
@@ -87,7 +92,7 @@ Never rewrite an applied migration. Deployment workflows run `prisma migrate dep
 
 ## API changes
 
-Update [docs/api.md](docs/api.md) whenever a route, method, authentication rule, request body, response body, limit, or status code changes. Update `.env.example`, README, CLAUDE, AGENTS, and DESIGN when their documented contract changes.
+Update [docs/api.md](docs/api.md) whenever a route, method, authentication rule, request body, response body, limit, or status code changes. Update `.env.example`, README, CLAUDE, AGENTS, and DESIGN when their documented contract changes. Changes to `apps/landing/` must pass `npm run landing:check` and remain static, accessible, and indexable.
 
 ## Security reports
 

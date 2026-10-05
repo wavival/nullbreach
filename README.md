@@ -1,173 +1,115 @@
 # NullBreach
 
-![Open Graph NullBreach](assets/og-nullbreach.webp)
+> Open-source AppSec guidance and code analysis for developers who need context before remediation.
 
-NullBreach is an open-source AppSec assistant for authenticated users. It answers secure-development questions and analyzes code for OWASP-aligned risks, impact, and remediation guidance.
+NullBreach is an MIT-licensed application-security assistant. Its public, bilingual landing is a static Astro subproject; the authenticated product is a Next.js application with Prisma Postgres, NextAuth, and OpenAI.
 
-The application is a single Next.js deployment containing three internal product areas: the public landing, the authenticated frontend, and the backend boundary. Vercel Microfrontends mounts it under the existing `wavival.dev` domain without coupling its deployment lifecycle to the portfolio.
+## Table of contents
 
-## Live services
+- [Product](#product)
+  - [Public landing](#public-landing)
+  - [Authenticated product](#authenticated-product)
+- [Architecture](#architecture)
+- [Public resources](#public-resources)
+- [Discoverability](#discoverability)
+- [Case study](#case-study)
+- [Quick start](#quick-start)
+- [Quality and security](#quality-and-security)
+- [Contributing and license](#contributing-and-license)
 
-- Production: [www.wavival.dev/nullbreach](https://www.wavival.dev/nullbreach)
-- Direct production project URL: [null-breach.vercel.app/nullbreach](https://null-breach.vercel.app/nullbreach)
-- Staging: [nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach](https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach)
-- Production deployments: [deployment workflow](https://github.com/wavival/nullbreach/actions/workflows/deploy-production.yml)
-- Vercel project: [wavivals-projects/nullbreach](https://vercel.com/wavivals-projects/nullbreach)
-- API reference: [docs/api.md](docs/api.md)
-- Production health: [`/nullbreach/api/health`](https://www.wavival.dev/nullbreach/api/health)
-- Swagger UI: [`/nullbreach/swagger`](https://www.wavival.dev/nullbreach/swagger)
+## Product
 
-Staging uses the Vercel `preview` environment with variables scoped to the `stg` branch. Production uses the Vercel `production` environment and the `main` branch. They use separate Prisma Postgres resources and separate secrets. Automatic Git deployments are disabled, so other branches do not create Vercel deployments.
+### Public landing
+
+`apps/landing/` is a static Astro site for the public `/nullbreach` and `/nullbreach/en` routes. It contains the product overview, technical limits, author information, contact details, structured data, canonical URLs, robots directives, and sitemap.
+
+### Authenticated product
+
+The root Next.js application owns sign-in, registration, password recovery, chat, code analysis, history, Swagger, health, API routes, authentication, and persistence. It is not indexable.
 
 ## Architecture
 
-| Layer          | Technology                                     | Responsibility                           |
-| -------------- | ---------------------------------------------- | ---------------------------------------- |
-| Application    | Next.js App Router                             | UI, server rendering, and route handlers |
-| Authentication | NextAuth Credentials and Google OAuth          | JWT sessions in HTTP-only cookies        |
-| Persistence    | Prisma ORM and Prisma Postgres                 | Users, chat history, and code analyses   |
-| AI             | OpenAI Responses API                           | Security chat and code analysis          |
-| Observability  | Vercel Web Analytics                           | Privacy-aware traffic measurement        |
-| Styling        | Tailwind CSS                                   | Responsive interface                     |
-| Quality        | Jest, Playwright, ESLint, Prettier, TypeScript | Automated verification                   |
-| Delivery       | GitHub Actions and Vercel                      | Gated promotion and deployment           |
+| Surface                       | Technology         | Responsibility                        |
+| ----------------------------- | ------------------ | ------------------------------------- |
+| `apps/landing/`               | Astro              | Static, indexable product landing     |
+| `app/`, `components/`         | Next.js App Router | Authenticated product interface       |
+| `app/api/`, `lib/`, `prisma/` | Next.js, Prisma    | API boundary, auth, AI, persistence   |
+| `.github/workflows/`          | GitHub Actions     | Quality, security, and delivery gates |
 
-See [DESIGN.md](DESIGN.md) for system boundaries and design decisions.
+The shared public contract is `https://www.wavival.dev/nullbreach`. The parent `wavival-dev` microfrontend must route the exact landing paths (`/nullbreach`, `/nullbreach/en`, sitemap, and robots) to the Astro deployment and preserve `/nullbreach/:path*` for the Next.js product deployment.
 
-## Internal product structure
+## Public resources
 
-This is a monorepo-ready repository with one deployable Next.js application. The three product areas are separated internally so they can evolve independently without creating three deployments prematurely:
+- Product: [www.wavival.dev/nullbreach](https://www.wavival.dev/nullbreach)
+- English landing: [www.wavival.dev/nullbreach/en](https://www.wavival.dev/nullbreach/en)
+- Sign in: [www.wavival.dev/nullbreach/login](https://www.wavival.dev/nullbreach/login)
+- Spanish sign in: [www.wavival.dev/nullbreach/en/login](https://www.wavival.dev/nullbreach/en/login)
+- Swagger UI: [production](https://www.wavival.dev/nullbreach/swagger) and [local](http://localhost:3000/nullbreach/swagger)
+- OpenAPI document: [production](https://www.wavival.dev/nullbreach/api/openapi) and [local](http://localhost:3000/nullbreach/api/openapi)
+- API reference: [docs/api.md](docs/api.md)
+- Case study: [docs/case-study.md](docs/case-study.md)
+- Repository: [github.com/wavival/nullbreach](https://github.com/wavival/nullbreach)
+- Crawler guidance: [robots.txt](https://www.wavival.dev/nullbreach/robots.txt), [sitemap](https://www.wavival.dev/nullbreach/sitemap-index.xml), and [llms.txt](https://www.wavival.dev/nullbreach/llms.txt)
 
-- `features/landing/`: public bilingual landing, SEO-facing copy, navigation, and brand presentation.
-- `app/` and `components/`: frontend routes, authenticated workspace, forms, and reusable UI components.
-- `app/api/`, `lib/`, and `prisma/`: backend route handlers, authentication, provider integrations, validation, persistence, and migrations.
+The source includes Swagger and OpenAPI routes. The current production deployment returns `404` for them until it is redeployed with the current source.
 
-The public URL contract remains `/nullbreach`. Internal routes are rewritten by Next.js and must continue to use `appPath()` for browser navigation and API calls.
+## Discoverability
 
-## Repository structure
+The public landing is the indexable surface. It has localized canonical and alternate URLs, Open Graph and Twitter metadata, JSON-LD software and website data, a sitemap, `robots.txt`, and `llms.txt`.
 
-```text
-app/                    Next.js pages, layouts, and API route handlers
-components/             Reusable React components
-features/landing/       Public landing and its localized content
-lib/                    Authentication, Prisma, OpenAI, and validation
-prisma/                 Database schema and migrations
-__tests__/unit/         Jest unit tests
-__tests__/e2e/          Playwright end-to-end tests
-docs/api.md             HTTP API reference
-.github/workflows/      CI, security, promotion gates, and deployments
-.githooks/              Local branch, commit, and secret checks
-microfrontends.json     Shared-domain routing contract with wavival.dev
-```
+The authenticated product, API, and Swagger routes are `noindex`. This keeps indexed content focused on the public explanation of the project while preserving navigable technical documentation for people who need it.
 
-## Requirements
+The landing uses semantic landmarks, a skip link, labeled navigation, visible keyboard focus, descriptive image alternative text, image dimensions, lazy loading, and reduced-motion behavior. It is static and contains no runtime secrets or client-side application data fetches.
+
+## Case study
+
+Read the [NullBreach case study](docs/case-study.md) for the problem scope, architecture, security boundaries, and public technical resources.
+
+## Quick start
+
+### Requirements
 
 - Node.js 24.x
 - npm 11 or newer
-- Access to the existing Prisma Postgres resource, or a compatible local PostgreSQL database
-- An OpenAI API key for chat and analysis
-- Vercel CLI access only when managing deployments or remote environment variables
+- PostgreSQL-compatible `DATABASE_URL`
 
-## Local development
+Google sign-in is enabled only when both `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are configured. See [.env.example](.env.example) for the OAuth callback URLs.
+
+- OpenAI API key for live chat and analysis
+
+### Install and run the product
 
 ```bash
-nvm use
+git clone git@github.com:wavival/nullbreach.git
+cd nullbreach
 npm ci
-npm run prepare
 cp .env.example .env.local
 npm run db:migrate:deploy
 npm run dev
 ```
 
-Open [http://localhost:3000/nullbreach](http://localhost:3000/nullbreach).
+Open `http://localhost:3000/nullbreach`.
 
-The committed `.env.example` documents every application variable. `.env.local` is ignored by Git and must contain local-only values. Vercel sensitive variables cannot be downloaded after creation, so replace local placeholders with your own PostgreSQL and OpenAI credentials.
-
-## Environment variables
-
-| Variable               | Classification | Required | Source                                   |
-| ---------------------- | -------------- | -------- | ---------------------------------------- |
-| `DATABASE_URL`         | Secret         | Yes      | Prisma Postgres connection URI           |
-| `NEXTAUTH_SECRET`      | Secret         | Yes      | `openssl rand -base64 32`                |
-| `NEXTAUTH_URL`         | Normal         | Yes      | Full `/nullbreach/api/auth` endpoint URL |
-| `OPENAI_API_KEY`       | Secret         | Yes      | OpenAI API key dashboard                 |
-| `OPENAI_MODEL`         | Normal         | Yes      | Supported OpenAI model identifier        |
-| `GOOGLE_CLIENT_ID`     | Normal         | No       | Google OAuth web client                  |
-| `GOOGLE_CLIENT_SECRET` | Secret         | No       | Google OAuth web client secret           |
-| `BREVO_API_KEY`        | Secret         | No       | Brevo transactional email API            |
-| `BREVO_SENDER_EMAIL`   | Normal         | No       | Verified Brevo sender address            |
-| `BREVO_SENDER_NAME`    | Normal         | No       | Display name for reset emails            |
-
-Google OAuth is optional locally and in deployments. Brevo variables are required to send password-reset emails outside the local development fallback.
-
-Vercel injects `DATABASE_URL`, `STORAGE_DATABASE_URL`, `STORAGE_PRISMA_DATABASE_URL`, and `STORAGE_POSTGRES_URL` from the connected Prisma Postgres resource. Production uses `prisma-postgres-amber-crystal`; staging uses `nullbreach-stg-postgres`. Application code reads only `DATABASE_URL`; the `STORAGE_*` names remain managed by the integration and must not be copied into client-side variables.
-
-## Database
-
-The Prisma schema defines `User`, `ChatHistory`, and `CodeAnalysis`. Apply committed migrations with:
+### Run the landing
 
 ```bash
-npm run db:migrate:deploy
+npm run landing:dev
 ```
 
-Create schema changes with `npx prisma migrate dev --name <description>`. Never edit a migration that has already run in a shared environment.
+Open `http://localhost:4321/nullbreach`.
 
-## API
-
-The API includes registration, NextAuth, Google OAuth, password recovery, authenticated chat, authenticated code analysis, history, and public health checks. Request bodies, response schemas, limits, authentication requirements, and error statuses are documented in [docs/api.md](docs/api.md).
-
-Production API base URL: [https://www.wavival.dev/nullbreach/api](https://www.wavival.dev/nullbreach/api)
-
-## SEO, accessibility, and indexing
-
-- Public landing routes are `/nullbreach` and `/nullbreach/en`, with localized canonical and alternate URLs.
-- `app/sitemap.ts` exposes only public landing URLs. `app/robots.ts` disallows APIs, authentication, and authenticated workspace routes.
-- Authentication and protected layouts publish `noindex, nofollow` metadata.
-- The landing uses one `h1`, ordered `h2` and `h3` sections, landmark elements, a skip link, visible keyboard focus, associated form labels, descriptive external links, reduced-motion support, and optimized `next/image` output.
-- Public metadata, Open Graph metadata, and viewport configuration live in `app/layout.tsx` and the English route layout.
-- Navigation uses the App Router `app/template.tsx` boundary for a short route transition and `app/loading.tsx` for pending navigations. Both respect `prefers-reduced-motion`.
-
-## Quality checks
+## Quality and security
 
 ```bash
 npm run verify
 npm run test:e2e
-npm audit --audit-level=high
+npm audit --audit-level=critical
 ```
 
-`npm run verify` runs linting, formatting checks, Next.js route type generation, Prisma validation and client generation, TypeScript, Jest coverage, and the production Webpack build. Playwright runs separately because it starts the application or targets a deployed environment.
+`npm run verify` includes Astro checks and build, Next.js validation and build, Prisma validation, TypeScript, formatting, linting, and unit coverage. Playwright tests the authenticated product separately.
 
-## Delivery flow
+Read [SECURITY.md](SECURITY.md) before reporting a vulnerability. The landing must remain static and free of secrets; the product reads runtime secrets only from server-side environment variables documented in [.env.example](.env.example).
 
-The only permitted promotion path is:
+## Contributing and license
 
-```text
-feature/* | fix/* | chore/*
-           -> dev
-           -> stg
-           -> main
-```
-
-- Work PRs target `dev`.
-- `dev -> stg` and `stg -> main` are regular promotion PRs.
-- Commitlint checks all commits in work PRs and the Conventional Commit title in promotion PRs.
-- No branch advances while a required check is pending, failing, cancelled, skipped after failure, or unavailable.
-- A merge into `stg` deploys the Vercel `preview` environment, applies Prisma migrations during the remote build, checks `/nullbreach/api/health`, and runs Playwright.
-- A merge into `main` deploys production, applies migrations during the remote build, checks health, and runs Playwright again.
-- Work branches are deleted locally and remotely after their successful merge into `dev`.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) for the complete contribution and automation rules.
-
-## Security
-
-- Passwords are hashed with bcrypt.
-- NextAuth sessions use HTTP-only cookies.
-- Database and OpenAI credentials remain server-side.
-- API input lengths are bounded before paid or persistent operations.
-- CI scans dependencies and Git history for high-severity vulnerabilities and secrets.
-- Security headers deny framing, MIME sniffing, and unnecessary browser permissions.
-- Vulnerabilities must be reported privately without publishing credentials or exploit details.
-
-## License
-
-NullBreach is released under the [MIT License](LICENSE).
+Fork, clone, study, modify, and distribute NullBreach under the [MIT License](LICENSE). Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md); work branches target `dev` and advance only after all required checks pass.

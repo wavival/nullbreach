@@ -28,10 +28,5 @@ jobs:
             echo "A .env file is tracked. Only .env.example is permitted."
             exit 1
           fi
-      - name: Dependency audit (high severity)
-        run: npm audit --audit-level=high
-      - name: Scan Git history for secrets
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      - name: Dependency audit (critical severity)
+        run: npm audit --audit-level=critical

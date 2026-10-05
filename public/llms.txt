@@ -1,0 +1,22 @@
+# NullBreach
+
+NullBreach is an open-source AppSec portfolio project by Valentina Ramírez, also known as wavival. It helps developers reason about secure development through AI-assisted chat, code analysis, and OWASP-oriented guidance.
+
+## Canonical resources
+
+- Public site: https://www.wavival.dev/nullbreach
+- English site: https://www.wavival.dev/nullbreach/en
+- Repository: https://github.com/wavival/nullbreach
+- Case study: https://github.com/wavival/nullbreach/blob/dev/docs/case-study.md
+- API documentation: https://github.com/wavival/nullbreach/blob/dev/docs/api.md
+- Swagger UI: https://www.wavival.dev/nullbreach/swagger
+- OpenAPI document: https://www.wavival.dev/nullbreach/api/openapi
+
+## Scope
+
+NullBreach is a portfolio project, not a commercial security service. Its generated guidance is not a substitute for professional security review, penetration testing, or dedicated security tooling.
+
+## Languages
+
+- Spanish: https://www.wavival.dev/nullbreach
+- English: https://www.wavival.dev/nullbreach/en
