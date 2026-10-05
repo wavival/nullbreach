@@ -21,6 +21,7 @@ What is pending. The detail of each change lives in [CHANGELOG.md](../CHANGELOG.
 
 ## Product
 
+- [ ] Restore chat and code analysis after adding credits to the configured OpenAI project; verify both flows.
 - [ ] Show stored code analyses in the workspace. They are saved in `code_analyses` but no screen or endpoint reads them; only the last ten chat entries appear in the history.
 - [ ] Let a user delete a chat entry, an analysis or the whole account. There is no delete endpoint today.
 - [ ] Add a unit test for the `503` branch of `reset-password`.
