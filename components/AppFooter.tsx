@@ -25,7 +25,11 @@ export default function AppFooter() {
         >
           ~/repository
         </a>
-        <a href="https://github.com/wavival/nullbreach/blob/dev/docs/api.md">
+        <a
+          href="https://github.com/wavival/nullbreach/blob/dev/docs/api.md"
+          target="_blank"
+          rel="noreferrer"
+        >
           ~/api-docs
         </a>
         <Link href={appPath("/")}>~/landing</Link>

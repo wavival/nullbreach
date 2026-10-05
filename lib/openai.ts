@@ -30,3 +30,21 @@ export const analyzeCode = (code: string) =>
     `Analyze this code for OWASP vulnerabilities. Explain severity, impact, and remediation.\n\n\`\`\`\n${code}\n\`\`\``,
   );
 export { MODEL as OPENAI_MODEL };
+
+export function getOpenAIError(error: unknown) {
+  const details = error as { code?: unknown; status?: unknown };
+  if (details?.code === "credit_balance_exhausted") {
+    return {
+      status: 429,
+      message:
+        "The AI service has reached its credit limit. Add credits and try again.",
+    };
+  }
+  if (details?.status === 429) {
+    return {
+      status: 429,
+      message: "The AI service is rate limited. Try again shortly.",
+    };
+  }
+  return { status: 502, message: "The AI service is temporarily unavailable." };
+}

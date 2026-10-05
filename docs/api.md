@@ -173,6 +173,7 @@ Errors:
 - `400`: `question` is missing or blank.
 - `401`: no valid session.
 - `413`: question exceeds 4,000 characters.
+- `429`: the OpenAI quota is exhausted or the provider rate limit was reached.
 - `502`: OpenAI or persistence failed while processing the request.
 
 ## Code analysis
@@ -206,6 +207,7 @@ Errors:
 - `400`: `code` is missing or blank.
 - `401`: no valid session.
 - `413`: code exceeds 20,000 characters.
+- `429`: the OpenAI quota is exhausted or the provider rate limit was reached.
 - `502`: OpenAI or persistence failed while processing the request.
 
 ## Chat history

@@ -17,10 +17,11 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "npm run landing:build && next build --webpack",
+    "build": "npm run landing:publish && next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "landing:build": "npm run build --workspace=@nullbreach/landing",
+    "landing:publish": "npm run landing:build && mkdir -p public/nullbreach && cp -R apps/landing/dist/. public/nullbreach/",
     "landing:check": "npm run check --workspace=@nullbreach/landing",
     "landing:dev": "npm run dev --workspace=@nullbreach/landing",
     "typegen": "next typegen --webpack",
