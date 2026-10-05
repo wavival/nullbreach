@@ -1,4 +1,4 @@
-name: Deploy staging
+name: Deploy preview
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     branches: [stg]
 
 concurrency:
-  group: deploy-staging
+  group: deploy-preview
   cancel-in-progress: true
 
 permissions:
@@ -16,12 +16,11 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: staging
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Check staging deployment configuration
+      - name: Check preview deployment configuration
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -29,7 +28,7 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
           if [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ] || [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_AUTOMATION_BYPASS_SECRET" ]; then
-            echo "Staging deployment is not configured."
+            echo "Preview deployment is not configured."
             exit 1
           fi
       - name: Deploy preview to the nullbreach Vercel project
@@ -56,6 +55,6 @@ jobs:
         env:
           E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-      - name: Report staging deployment URL
+      - name: Report preview deployment URL
         if: success()
-        run: echo "Staging deployed to ${{ steps.deploy.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
+        run: echo "Preview deployed to ${{ steps.deploy.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
