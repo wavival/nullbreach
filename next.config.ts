@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   experimental: { useTypeScriptCli: false },
   async rewrites() {
     return [
-      { source: "/nullbreach", destination: "/" },
+      { source: "/nullbreach", destination: "/nullbreach/index.html" },
       { source: "/nullbreach/:path*", destination: "/:path*" },
     ];
   },

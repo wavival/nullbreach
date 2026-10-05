@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentSession } from "@/lib/auth";
-import { analyzeCode } from "@/lib/openai";
+import { analyzeCode, getOpenAIError } from "@/lib/openai";
 import { prisma } from "@/lib/prisma";
 import { hasValidLength, isNonEmptyString } from "@/lib/validation";
 
@@ -34,9 +34,10 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Analysis request failed", error);
+    const aiError = getOpenAIError(error);
     return NextResponse.json(
-      { error: "Unable to analyze the submitted code." },
-      { status: 502 },
+      { error: aiError.message },
+      { status: aiError.status },
     );
   }
 }

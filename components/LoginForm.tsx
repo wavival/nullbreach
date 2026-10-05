@@ -194,12 +194,16 @@ export default function LoginForm({ locale, googleEnabled }: LoginFormProps) {
             <a
               className="hover:text-primary"
               href="https://github.com/wavival/nullbreach"
+              target="_blank"
+              rel="noreferrer"
             >
               GitHub
             </a>
             <a
               className="hover:text-primary"
               href="https://github.com/wavival/nullbreach/blob/dev/docs/api.md"
+              target="_blank"
+              rel="noreferrer"
             >
               {text.api}
             </a>

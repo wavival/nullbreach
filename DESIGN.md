@@ -29,7 +29,7 @@ The repository contains two deployable surfaces:
 - Frontend: authentication screens and the protected chat and analysis workspace.
 - Backend: route handlers, authentication callbacks, validation, provider clients, persistence, and migrations.
 
-The parent microfrontend routes the exact landing paths to Astro and nested product paths to Next.js. Both surfaces preserve the `/nullbreach` public base path.
+The build publishes the exact Astro landing paths as static files in the Next.js deployment, while nested product paths are served by Next.js. Both surfaces preserve the `/nullbreach` public base path.
 
 ## Brand identity
 

@@ -281,7 +281,12 @@ const schema = [
               en
             </a>
           </div>
-          <a class="button primary desktop-login" href={`${productUrl}/login`}>
+          <a
+            class="button primary desktop-login"
+            href={`${productUrl}/login`}
+            target="_blank"
+            rel="noreferrer"
+          >
             <span aria-hidden="true">~/</span>
             {copy.signIn}
           </a>
@@ -299,7 +304,12 @@ const schema = [
               >
                 ~/{copy.project}
               </a>
-              <a class="button primary" href={`${productUrl}/login`}>
+              <a
+                class="button primary"
+                href={`${productUrl}/login`}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <span aria-hidden="true">~/</span>
                 {copy.signIn}
               </a>
@@ -333,7 +343,12 @@ const schema = [
                 {copy.intro}
               </p>
               <div class="actions">
-                <a class="button primary" href={`${productUrl}/login`}>
+                <a
+                  class="button primary"
+                  href={`${productUrl}/login`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <span aria-hidden="true">~/</span>
                   {copy.signIn}
                 </a>
@@ -494,11 +509,21 @@ const schema = [
             </h2>
             <p>{copy.readyBody}</p>
             <div class="cta-actions">
-              <a class="button primary" href={`${productUrl}/login`}>
+              <a
+                class="button primary"
+                href={`${productUrl}/login`}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <span aria-hidden="true">~/</span>
                 {copy.signIn}
               </a>
-              <a class="button ghost" href={docsUrl}>
+              <a
+                class="button ghost"
+                href={docsUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <span aria-hidden="true">~/</span>
                 {copy.apiDocs}
               </a>
@@ -551,7 +576,9 @@ const schema = [
           <h2>{copy.product}</h2>
           <a href={`#${copy.features}`}>~/{copy.features}</a>
           <a href={`#${copy.how}`}>~/{copy.how}</a>
-          <a href={`${productUrl}/login`}>~/login</a>
+          <a href={`${productUrl}/login`} target="_blank" rel="noreferrer">
+            ~/login
+          </a>
         </nav>
         <nav aria-label={es ? "Recursos" : "Resources"}>
           <h2>{copy.resources}</h2>
@@ -562,7 +589,9 @@ const schema = [
           >
             ~/{copy.repository.toLowerCase()}
           </a>
-          <a href={docsUrl}>~/api-docs</a>
+          <a href={docsUrl} target="_blank" rel="noreferrer">
+            ~/api-docs
+          </a>
         </nav>
       </div>
       <div class="footer-bottom">
