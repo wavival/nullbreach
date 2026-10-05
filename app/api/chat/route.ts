@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentSession } from "@/lib/auth";
-import { askOpenAI, OPENAI_MODEL } from "@/lib/openai";
+import { askOpenAI, getOpenAIError, OPENAI_MODEL } from "@/lib/openai";
 import { prisma } from "@/lib/prisma";
 import { hasValidLength, isNonEmptyString } from "@/lib/validation";
 
@@ -38,9 +38,10 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Chat request failed", error);
+    const aiError = getOpenAIError(error);
     return NextResponse.json(
-      { error: "Unable to process the chat request." },
-      { status: 502 },
+      { error: aiError.message },
+      { status: aiError.status },
     );
   }
 }

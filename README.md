@@ -36,7 +36,7 @@ The root Next.js application owns sign-in, registration, password recovery, chat
 | `app/api/`, `lib/`, `prisma/` | Next.js, Prisma    | API boundary, auth, AI, persistence   |
 | `.github/workflows/`          | GitHub Actions     | Quality, security, and delivery gates |
 
-The shared public contract is `https://www.wavival.dev/nullbreach`. The parent `wavival-dev` microfrontend must route the exact landing paths (`/nullbreach`, `/nullbreach/en`, sitemap, and robots) to the Astro deployment and preserve `/nullbreach/:path*` for the Next.js product deployment.
+The shared public contract is `https://www.wavival.dev/nullbreach`. The build publishes the Astro output as static files in the Next.js deployment, which serves the exact landing paths (`/nullbreach`, `/nullbreach/en`, sitemap, and robots) and preserves `/nullbreach/:path*` for product routes.
 
 ## Public resources
 

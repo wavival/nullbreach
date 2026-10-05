@@ -29,7 +29,7 @@ Automatic Git deployments are disabled. GitHub Actions is the only deployment pa
 
 Staging and production must never share a Prisma Postgres resource, session secret, or OpenAI API key. Production uses `prisma-postgres-amber-crystal`; staging uses `nullbreach-stg-postgres`.
 
-The public surface is mounted at `/nullbreach` under `wavival-dev`. `apps/landing/` owns the exact public landing, English landing, sitemap, and robots paths; the root Next.js application owns `/nullbreach/:path*` product routes. Keep the parent routing contract, `lib/paths.ts`, Next.js rewrites, NextAuth configuration, browser links, and API calls aligned with that public base path.
+The public surface is mounted at `/nullbreach` under `wavival-dev`. The build publishes the Astro landing, English landing, sitemap, and robots from `apps/landing/` as static files, while the root Next.js application owns `/nullbreach/:path*` product routes. Keep the parent routing contract, `lib/paths.ts`, Next.js rewrites, NextAuth configuration, browser links, and API calls aligned with that public base path.
 
 ## Commit convention
 

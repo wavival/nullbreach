@@ -61,7 +61,7 @@ Only two deployable environments are used:
 
 Automatic Git deployments are disabled in `vercel.json`. GitHub Actions performs all builds, migrations, deployments, health checks, and deployed E2E tests. Do not deploy `dev`, feature branches, Dependabot branches, or previews from branches other than `stg`.
 
-The Next.js product is a child microfrontend of `wavival-dev` at `/nullbreach/:path*`. The Astro landing owns `/nullbreach`, `/nullbreach/en`, and its crawl assets. Keep the parent routing contract, `lib/paths.ts`, Next.js rewrites, NextAuth configuration, browser links, and API requests synchronized.
+The Next.js product is a child microfrontend of `wavival-dev` at `/nullbreach/:path*`. The build publishes the Astro landing and its crawl assets at `/nullbreach` and `/nullbreach/en`; the product owns nested routes. Keep the parent routing contract, `lib/paths.ts`, Next.js rewrites, NextAuth configuration, browser links, and API requests synchronized.
 
 Public indexing is limited to the Astro Spanish and English landing routes. The Next.js product is noindex and must not add authenticated routes to a sitemap.
 

@@ -8,10 +8,6 @@ export const openapiDocument = {
   },
   servers: [
     { url: "https://www.wavival.dev/nullbreach", description: "Production" },
-    {
-      url: "https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach",
-      description: "Staging",
-    },
     { url: "http://localhost:3000/nullbreach", description: "Local" },
   ],
   tags: [{ name: "Health" }, { name: "Authentication" }, { name: "Workspace" }],
@@ -153,6 +149,14 @@ export const openapiDocument = {
               },
             },
           },
+          "429": {
+            description: "AI provider quota or rate limit reached",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" },
+              },
+            },
+          },
           "502": {
             description: "Provider or persistence failure",
             content: {
@@ -205,6 +209,14 @@ export const openapiDocument = {
           },
           "413": {
             description: "Input too long",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" },
+              },
+            },
+          },
+          "429": {
+            description: "AI provider quota or rate limit reached",
             content: {
               "application/json": {
                 schema: { $ref: "#/components/schemas/Error" },
