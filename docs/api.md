@@ -1,21 +1,27 @@
 # NullBreach API Reference
 
-**Last updated:** October 4, 2026
+## Table of contents
 
-## Official API URL
+- [API locations](#api-locations)
+- [Error format](#error-format)
+- [Health](#health)
+- [Registration](#registration)
+- [Authentication](#authentication)
+- [Password recovery](#password-recovery)
+- [Chat](#chat)
+- [Code analysis](#code-analysis)
+- [Chat history](#chat-history)
 
-The official production API base URL is:
+## API locations
 
-```text
-https://www.wavival.dev/nullbreach/api
-```
+| Resource         | Production                                       | Local                                          |
+| ---------------- | ------------------------------------------------ | ---------------------------------------------- |
+| Swagger UI       | `https://www.wavival.dev/nullbreach/swagger`     | `http://localhost:3000/nullbreach/swagger`     |
+| OpenAPI document | `https://www.wavival.dev/nullbreach/api/openapi` | `http://localhost:3000/nullbreach/api/openapi` |
+| API base URL     | `https://www.wavival.dev/nullbreach/api`         | `http://localhost:3000/nullbreach/api`         |
+| Health           | `https://www.wavival.dev/nullbreach/api/health`  | `http://localhost:3000/nullbreach/api/health`  |
 
-- Public health check: `https://www.wavival.dev/nullbreach/api/health`
-- API reference: <https://github.com/wavival/nullbreach/blob/dev/docs/api.md>
-- Local base URL: `http://localhost:3000/nullbreach/api`
-- Staging base URL: `https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach/api`
-
-The OpenAPI and Swagger routes exist in the application source at `/api/openapi` and `/swagger`. They currently return `404` on the production host, so this file is the reference until those routes are deployed.
+The source defines Swagger at `/swagger` and the OpenAPI document at `/api/openapi`. The current production deployment returns `404` for both routes, so they will become available at the production URLs after the next deployment that includes these routes.
 
 Do not use `/api` at the `wavival.dev` root or a direct Vercel project URL as public API bases.
 

@@ -2,8 +2,6 @@
 
 > Open-source AppSec guidance and code analysis for developers who need context before remediation.
 
-**Last updated:** October 4, 2026
-
 NullBreach is an MIT-licensed application-security assistant. Its public, bilingual landing is a static Astro subproject; the authenticated product is a Next.js application with Prisma Postgres, NextAuth, and OpenAI.
 
 ## Table of contents
@@ -12,7 +10,9 @@ NullBreach is an MIT-licensed application-security assistant. Its public, biling
   - [Public landing](#public-landing)
   - [Authenticated product](#authenticated-product)
 - [Architecture](#architecture)
-- [URLs](#urls)
+- [Public resources](#public-resources)
+- [Discoverability](#discoverability)
+- [Case study](#case-study)
 - [Quick start](#quick-start)
 - [Quality and security](#quality-and-security)
 - [Contributing and license](#contributing-and-license)
@@ -38,13 +38,32 @@ The root Next.js application owns sign-in, registration, password recovery, chat
 
 The shared public contract is `https://www.wavival.dev/nullbreach`. The parent `wavival-dev` microfrontend must route the exact landing paths (`/nullbreach`, `/nullbreach/en`, sitemap, and robots) to the Astro deployment and preserve `/nullbreach/:path*` for the Next.js product deployment.
 
-## URLs
+## Public resources
 
 - Product: [www.wavival.dev/nullbreach](https://www.wavival.dev/nullbreach)
+- English landing: [www.wavival.dev/nullbreach/en](https://www.wavival.dev/nullbreach/en)
 - Sign in: [www.wavival.dev/nullbreach/login](https://www.wavival.dev/nullbreach/login)
-- Sign in, Spanish: [www.wavival.dev/nullbreach/en/login](https://www.wavival.dev/nullbreach/en/login)
+- Spanish sign in: [www.wavival.dev/nullbreach/en/login](https://www.wavival.dev/nullbreach/en/login)
+- Swagger UI: [production](https://www.wavival.dev/nullbreach/swagger) and [local](http://localhost:3000/nullbreach/swagger)
+- OpenAPI document: [production](https://www.wavival.dev/nullbreach/api/openapi) and [local](http://localhost:3000/nullbreach/api/openapi)
 - API reference: [docs/api.md](docs/api.md)
-- Health: [www.wavival.dev/nullbreach/api/health](https://www.wavival.dev/nullbreach/api/health)
+- Case study: [docs/case-study.md](docs/case-study.md)
+- Repository: [github.com/wavival/nullbreach](https://github.com/wavival/nullbreach)
+- Crawler guidance: [robots.txt](https://www.wavival.dev/nullbreach/robots.txt), [sitemap](https://www.wavival.dev/nullbreach/sitemap-index.xml), and [llms.txt](https://www.wavival.dev/nullbreach/llms.txt)
+
+The source includes Swagger and OpenAPI routes. The current production deployment returns `404` for them until it is redeployed with the current source.
+
+## Discoverability
+
+The public landing is the indexable surface. It has localized canonical and alternate URLs, Open Graph and Twitter metadata, JSON-LD software and website data, a sitemap, `robots.txt`, and `llms.txt`.
+
+The authenticated product, API, and Swagger routes are `noindex`. This keeps indexed content focused on the public explanation of the project while preserving navigable technical documentation for people who need it.
+
+The landing uses semantic landmarks, a skip link, labeled navigation, visible keyboard focus, descriptive image alternative text, image dimensions, lazy loading, and reduced-motion behavior. It is static and contains no runtime secrets or client-side application data fetches.
+
+## Case study
+
+Read the [NullBreach case study](docs/case-study.md) for the problem scope, architecture, security boundaries, and public technical resources.
 
 ## Quick start
 
