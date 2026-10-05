@@ -40,7 +40,7 @@ export default function RegisterPage() {
     >
       <form
         onSubmit={submit}
-        className="w-full max-w-md space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
+        className="w-full max-w-[28rem] space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
       >
         <p className="font-mono text-body-sm text-primary">
           root@nullbreach:~$ auth register
@@ -53,6 +53,7 @@ export default function RegisterPage() {
             required
             name="email"
             type="email"
+            autoComplete="email"
             className="mt-1 w-full rounded border border-border bg-surface-alt p-2 text-foreground outline-none focus:border-primary"
           />
         </label>
@@ -61,12 +62,14 @@ export default function RegisterPage() {
           name="password"
           label="Password"
           minLength={8}
+          autoComplete="new-password"
         />
         <PasswordInput
           required
           name="confirmPassword"
           label="Confirm password"
           minLength={8}
+          autoComplete="new-password"
         />
         {error && (
           <p className="text-sm text-red-400" role="alert">

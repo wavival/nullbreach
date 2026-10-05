@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Open-source AppSec assistant for secure development guidance and code analysis.",
   "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,13 +17,16 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build": "npm run landing:build && next build --webpack",
     "start": "next start",
     "lint": "eslint .",
+    "landing:build": "npm run build --workspace=@nullbreach/landing",
+    "landing:check": "npm run check --workspace=@nullbreach/landing",
+    "landing:dev": "npm run dev --workspace=@nullbreach/landing",
     "typegen": "next typegen --webpack",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "prettier --plugin=prettier-plugin-astro --write .",
+    "format:check": "prettier --plugin=prettier-plugin-astro --check .",
     "test": "npm run test:unit",
     "test:unit": "jest --runInBand",
     "test:coverage": "jest --coverage --runInBand",
@@ -28,7 +34,7 @@
     "db:validate": "DATABASE_URL=${DATABASE_URL:-postgresql://validation:validation@localhost:5432/nullbreach} prisma validate",
     "db:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://validation:validation@localhost:5432/nullbreach} prisma generate",
     "db:migrate:deploy": "if [ -f \"$PWD/.env.local\" ]; then set -a; . \"$PWD/.env.local\"; set +a; fi; prisma migrate deploy",
-    "verify": "npm run lint && npm run format:check && npm run typegen && npm run db:validate && npm run db:generate && npm run typecheck && npm run test:coverage && npm run build",
+    "verify": "npm run lint && npm run format:check && npm run landing:check && npm run typegen && npm run db:validate && npm run db:generate && npm run typecheck && npm run test:coverage && npm run build",
     "prepare": "bash scripts/install-git-hooks.sh"
   },
   "dependencies": {
@@ -50,15 +56,17 @@
     "@types/node": "26.6.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "autoprefixer": "10.6.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "cookie": "2.0.1",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.6",
     "jest": "30.5.2",
     "jest-environment-jsdom": "30.5.2",
     "postcss": "8.5.28",
     "prettier": "3.9.9",
+    "prettier-plugin-astro": "1.1.0",
     "prisma": "6.12.0",
-    "tailwindcss": "3.4.19",
+    "tailwindcss": "4.3.3",
     "ts-jest": "29.4.13",
     "ts-node": "10.9.2",
     "typescript": "5.9.3"

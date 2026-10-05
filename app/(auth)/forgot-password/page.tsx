@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
     >
       <form
         onSubmit={submit}
-        className="w-full max-w-md space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
+        className="w-full max-w-[28rem] space-y-4 rounded-lg border border-border bg-surface/90 p-6 shadow-large"
       >
         <p className="font-mono text-body-sm text-primary">
           root@nullbreach:~$ auth reset
@@ -42,6 +42,7 @@ export default function ForgotPasswordPage() {
             id="forgot-email"
             required
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             className="mt-1 w-full rounded border border-border bg-surface-alt p-2 text-foreground outline-none focus:border-primary"

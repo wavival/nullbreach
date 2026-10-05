@@ -1,11 +1,29 @@
 # NullBreach API Reference
 
-## Base URLs
+## Table of contents
 
-- Production: `https://wavival.dev/nullbreach/api`
-- Direct production project URL: `https://null-breach.vercel.app/nullbreach/api`
-- Local: `http://localhost:3000/nullbreach/api`
-- Staging: `https://nullbreach-git-stg-wavivals-projects.vercel.app/nullbreach/api`
+- [API locations](#api-locations)
+- [Error format](#error-format)
+- [Health](#health)
+- [Registration](#registration)
+- [Authentication](#authentication)
+- [Password recovery](#password-recovery)
+- [Chat](#chat)
+- [Code analysis](#code-analysis)
+- [Chat history](#chat-history)
+
+## API locations
+
+| Resource         | Production                                       | Local                                          |
+| ---------------- | ------------------------------------------------ | ---------------------------------------------- |
+| Swagger UI       | `https://www.wavival.dev/nullbreach/swagger`     | `http://localhost:3000/nullbreach/swagger`     |
+| OpenAPI document | `https://www.wavival.dev/nullbreach/api/openapi` | `http://localhost:3000/nullbreach/api/openapi` |
+| API base URL     | `https://www.wavival.dev/nullbreach/api`         | `http://localhost:3000/nullbreach/api`         |
+| Health           | `https://www.wavival.dev/nullbreach/api/health`  | `http://localhost:3000/nullbreach/api/health`  |
+
+The source defines Swagger at `/swagger` and the OpenAPI document at `/api/openapi`. The current production deployment returns `404` for both routes, so they will become available at the production URLs after the next deployment that includes these routes.
+
+Do not use `/api` at the `wavival.dev` root or a direct Vercel project URL as public API bases.
 
 All request and response bodies use JSON unless stated otherwise. Authentication uses the NextAuth session cookie issued by the same origin.
 
@@ -113,10 +131,16 @@ Request:
 { "token": "reset-token", "password": "minimum-eight-characters" }
 ```
 
+Success, `200`:
+
+```json
+{ "message": "Password updated." }
+```
+
 Errors:
 
-- `400`: invalid token or password length.
-- `200`: password updated successfully.
+- `400`: invalid token or password length, or the reset link is invalid or expired.
+- `503`: password reset persistence is unavailable.
 
 ## Chat
 

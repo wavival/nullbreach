@@ -29,7 +29,7 @@ Automatic Git deployments are disabled. GitHub Actions is the only deployment pa
 
 Staging and production must never share a Prisma Postgres resource, session secret, or OpenAI API key. Production uses `prisma-postgres-amber-crystal`; staging uses `nullbreach-stg-postgres`.
 
-The application is mounted at `/nullbreach` as a Vercel child microfrontend of `wavival-dev`. Keep `microfrontends.json`, `lib/paths.ts`, Next.js rewrites, NextAuth configuration, browser links, and API calls aligned with that public base path.
+The public surface is mounted at `/nullbreach` under `wavival-dev`. `apps/landing/` owns the exact public landing, English landing, sitemap, and robots paths; the root Next.js application owns `/nullbreach/:path*` product routes. Keep the parent routing contract, `lib/paths.ts`, Next.js rewrites, NextAuth configuration, browser links, and API calls aligned with that public base path.
 
 ## Commit convention
 
@@ -49,15 +49,15 @@ Commit headers and generated documentation must not contain em dashes.
 
 Branch protection for `dev`, `stg`, and `main` must require:
 
-- branch flow validation
-- commitlint for every work commit and each promotion PR title
-- lint, format, TypeScript, Prisma validation, unit coverage, and Next.js build
+- branch flow validation (`validate-pr-base.yml`, thin caller of `lumina-w/agents`' `shared-validate-pr-base.yml`)
+- commitlint for every work commit and each promotion PR title (`commit-lint.yml`/`pr-title.yml`, thin callers of the same repo's `shared-commitlint.yml`/`shared-pr-title.yml`; `commitlint.config.cjs` stays local, pending a `DEV_STANDARDS_DEPLOY_KEY` secret to extend `@lumina-w/dev-standards/commitlint`)
+- lint, format, TypeScript, Prisma validation, unit coverage, and Next.js build (`ci.yml`, unchanged)
 - Playwright E2E tests
 - automated static review
-- secret and dependency scanning
+- secret scanning (`gitleaks.yml`, thin caller of `shared-gitleaks.yml`) and dependency scanning (`security-scan.yml`, unchanged)
 - successful staging deployment before production promotion
 
-Use Node.js 24.x and npm 11 or newer. The stack is Next.js App Router, React, TypeScript, Prisma ORM, Prisma Postgres, NextAuth, Jest, Playwright, GitHub Actions, and Vercel.
+Use Node.js 24.x and npm 11 or newer. The stack is Astro, Next.js App Router, React, TypeScript, Prisma ORM, Prisma Postgres, NextAuth, Jest, Playwright, GitHub Actions, and Vercel.
 
 ## Documentation
 
@@ -73,8 +73,8 @@ The permanent branches are `dev`, `stg`, and `main`. At the end of a completed d
 
 # This is NOT the Next.js you know
 
-This version has breaking changes - APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+This version has breaking changes. APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
-This block is written and re-added by `next dev` - verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+This block is written and re-added by `next dev`. Verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->

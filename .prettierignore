@@ -1,0 +1,5 @@
+apps/landing/.astro/
+apps/landing/dist/
+coverage/
+playwright-report/
+test-results/

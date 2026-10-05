@@ -7,7 +7,7 @@ Date: 2026-09-23
 - Re-audited branches, workflows, hooks, tests, deploy configuration, and protection state.
 - Confirmed `dev`, `stg`, and `main` already exist locally and remotely.
 - Confirmed GitHub currently reports `dev` as the default branch, and a fresh clone now points local `origin/HEAD` to `origin/dev`.
-- Confirmed the actual stack is Next.js, React, TypeScript, Prisma, PostgreSQL/Supabase, NextAuth, Jest, Playwright, GitHub Actions, and Vercel.
+- Confirmed the actual stack is Next.js, React, TypeScript, Prisma, Prisma Postgres, NextAuth, Jest, Playwright, GitHub Actions, and Vercel.
 - Confirmed `dev`, `stg`, and `main` branch protection already enforces admins, requires 0 approving reviews, blocks force-pushes and branch deletion, and requires `validate-source`, `commitlint`, `quality`, `scan`, `test`, and `static-review`.
 - Added commitlint configuration with the approved NullBreach scopes.
 - Wired the existing local commit message hook to commitlint.
